@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.ServerTableOneMapper">
+  <resultMap id="BaseResultMap" type="com.example.demo.dto.ServerTableOne">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="dev_group_id" jdbcType="BIGINT" property="devGroupId" />
+    <result column="dev_id" jdbcType="BIGINT" property="devId" />
+    <result column="sensor_id" jdbcType="BIGINT" property="sensorId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="CEMS_out_NOX" jdbcType="DOUBLE" property="cemsOutNox" />
+    <result column="CEMS_out_SO2" jdbcType="DOUBLE" property="cemsOutSo2" />
+    <result column="DeNOx_out_temp" jdbcType="DOUBLE" property="denoxOutTemp" />
+    <result column="DeNOx_out_press" jdbcType="DOUBLE" property="denoxOutPress" />
+    <result column="AMMONIA_escape" jdbcType="DOUBLE" property="ammoniaEscape" />
+    <result column="DeNOx_in_temp" jdbcType="DOUBLE" property="denoxInTemp" />
+    <result column="DeNOx_in_press" jdbcType="DOUBLE" property="denoxInPress" />
+    <result column="DeNOx_smoke_in_flux" jdbcType="DOUBLE" property="denoxSmokeInFlux" />
+    <result column="DeNOx_smoke_in_flux_total" jdbcType="DOUBLE" property="denoxSmokeInFluxTotal" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, dev_group_id, dev_id, sensor_id, create_time, CEMS_out_NOX, CEMS_out_SO2, 
+    DeNOx_out_temp, DeNOx_out_press, AMMONIA_escape, DeNOx_in_temp, DeNOx_in_press, DeNOx_smoke_in_flux, 
+    DeNOx_smoke_in_flux_total
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from server_table_1
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from server_table_1
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.example.demo.dto.ServerTableOne">
+    insert into server_table_1 (id, user_id, dev_group_id, 
+      dev_id, sensor_id, create_time, 
+      CEMS_out_NOX, CEMS_out_SO2, DeNOx_out_temp, 
+      DeNOx_out_press, AMMONIA_escape, DeNOx_in_temp, 
+      DeNOx_in_press, DeNOx_smoke_in_flux, DeNOx_smoke_in_flux_total
+      )
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{devGroupId,jdbcType=BIGINT}, 
+      #{devId,jdbcType=BIGINT}, #{sensorId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{cemsOutNox,jdbcType=DOUBLE}, #{cemsOutSo2,jdbcType=DOUBLE}, #{denoxOutTemp,jdbcType=DOUBLE}, 
+      #{denoxOutPress,jdbcType=DOUBLE}, #{ammoniaEscape,jdbcType=DOUBLE}, #{denoxInTemp,jdbcType=DOUBLE}, 
+      #{denoxInPress,jdbcType=DOUBLE}, #{denoxSmokeInFlux,jdbcType=DOUBLE}, #{denoxSmokeInFluxTotal,jdbcType=DOUBLE}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.demo.dto.ServerTableOne">
+    insert into server_table_1
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="devGroupId != null">
+        dev_group_id,
+      </if>
+      <if test="devId != null">
+        dev_id,
+      </if>
+      <if test="sensorId != null">
+        sensor_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="cemsOutNox != null">
+        CEMS_out_NOX,;
+
+      </if>
+      <if test="cemsOutSo2 != null">
+        CEMS_out_SO2,
+      </if>
+      <if test="denoxOutTemp != null">
+        DeNOx_out_temp,
+      </if>
+      <if test="denoxOutPress != null">
+        DeNOx_out_press,
+      </if>
+      <if test="ammoniaEscape != null">
+        AMMONIA_escape,
+      </if>
+      <if test="denoxInTemp != null">
+        DeNOx_in_temp,
+      </if>
+      <if test="denoxInPress != null">
+        DeNOx_in_press,
+      </if>
+      <if test="denoxSmokeInFlux != null">
+        DeNOx_smoke_in_flux,
+      </if>
+      <if test="denoxSmokeInFluxTotal != null">
+        DeNOx_smoke_in_flux_total,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="devGroupId != null">
+        #{devGroupId,jdbcType=BIGINT},
+      </if>
+      <if test="devId != null">
+        #{devId,jdbcType=BIGINT},
+      </if>
+      <if test="sensorId != null">
+        #{sensorId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cemsOutNox != null">
+        #{cemsOutNox,jdbcType=DOUBLE},
+      </if>
+      <if test="cemsOutSo2 != null">
+        #{cemsOutSo2,jdbcType=DOUBLE},
+      </if>
+      <if test="denoxOutTemp != null">
+        #{denoxOutTemp,jdbcType=DOUBLE},
+      </if>
+      <if test="denoxOutPress != null">
+        #{denoxOutPress,jdbcType=DOUBLE},
+      </if>
+      <if test="ammoniaEscape != null">
+        #{ammoniaEscape,jdbcType=DOUBLE},
+      </if>
+      <if test="denoxInTemp != null">
+        #{denoxInTemp,jdbcType=DOUBLE},
+      </if>
+      <if test="denoxInPress != null">
+        #{denoxInPress,jdbcType=DOUBLE},
+      </if>
+      <if test="denoxSmokeInFlux != null">
+        #{denoxSmokeInFlux,jdbcType=DOUBLE},
+      </if>
+      <if test="denoxSmokeInFluxTotal != null">
+        #{denoxSmokeInFluxTotal,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.dto.ServerTableOne">
+    update server_table_1
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="devGroupId != null">
+        dev_group_id = #{devGroupId,jdbcType=BIGINT},
+      </if>
+      <if test="devId != null">
+        dev_id = #{devId,jdbcType=BIGINT},
+      </if>
+      <if test="sensorId != null">
+        sensor_id = #{sensorId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cemsOutNox != null">
+        CEMS_out_NOX = #{cemsOutNox,jdbcType=DOUBLE},
+      </if>
+      <if test="cemsOutSo2 != null">
+        CEMS_out_SO2 = #{cemsOutSo2,jdbcType=DOUBLE},
+      </if>
+      <if test="denoxOutTemp != null">
+        DeNOx_out_temp = #{denoxOutTemp,jdbcType=DOUBLE},
+      </if>
+      <if test="denoxOutPress != null">
+        DeNOx_out_press = #{denoxOutPress,jdbcType=DOUBLE},
+      </if>
+      <if test="ammoniaEscape != null">
+        AMMONIA_escape = #{ammoniaEscape,jdbcType=DOUBLE},
+      </if>
+      <if test="denoxInTemp != null">
+        DeNOx_in_temp = #{denoxInTemp,jdbcType=DOUBLE},
+      </if>
+      <if test="denoxInPress != null">
+        DeNOx_in_press = #{denoxInPress,jdbcType=DOUBLE},
+      </if>
+      <if test="denoxSmokeInFlux != null">
+        DeNOx_smoke_in_flux = #{denoxSmokeInFlux,jdbcType=DOUBLE},
+      </if>
+      <if test="denoxSmokeInFluxTotal != null">
+        DeNOx_smoke_in_flux_total = #{denoxSmokeInFluxTotal,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.demo.dto.ServerTableOne">
+    update server_table_1
+    set user_id = #{userId,jdbcType=BIGINT},
+      dev_group_id = #{devGroupId,jdbcType=BIGINT},
+      dev_id = #{devId,jdbcType=BIGINT},
+      sensor_id = #{sensorId,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      CEMS_out_NOX = #{cemsOutNox,jdbcType=DOUBLE},
+      CEMS_out_SO2 = #{cemsOutSo2,jdbcType=DOUBLE},
+      DeNOx_out_temp = #{denoxOutTemp,jdbcType=DOUBLE},
+      DeNOx_out_press = #{denoxOutPress,jdbcType=DOUBLE},
+      AMMONIA_escape = #{ammoniaEscape,jdbcType=DOUBLE},
+      DeNOx_in_temp = #{denoxInTemp,jdbcType=DOUBLE},
+      DeNOx_in_press = #{denoxInPress,jdbcType=DOUBLE},
+      DeNOx_smoke_in_flux = #{denoxSmokeInFlux,jdbcType=DOUBLE},
+      DeNOx_smoke_in_flux_total = #{denoxSmokeInFluxTotal,jdbcType=DOUBLE}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectnum" resultType="java.lang.Integer">
+    SELECT COUNT(1) FROM server_table_1
+  </select>
+</mapper>
