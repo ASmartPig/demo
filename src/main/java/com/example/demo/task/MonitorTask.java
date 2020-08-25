@@ -3,6 +3,7 @@ package com.example.demo.task;
 import com.example.demo.controller.BpNeuralNetworkHandle;
 import com.example.demo.dto.UserInfo;
 import com.example.demo.dao.UserInfoMapper;
+import com.example.demo.mapper.ServerTableOneMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,14 +17,19 @@ public class MonitorTask {
     private BpNeuralNetworkHandle bpNeuralNetworkHandle;
 
     @Autowired
+    private ServerTableOneMapper serverTableOneMapper;
+
+    @Autowired
     private UserInfoMapper userInfoMapper;
 
     //@Scheduled(cron = "0 */2 * * * ?")
     @Scheduled(cron = "*/5 * * * * ?")
     public void predicted(){
         bpNeuralNetworkHandle.printf();
-        UserInfo num = userInfoMapper.selectById("f68d8c99-9ec1-4c2f-af82-3796e85e37ae");
+        int num = serverTableOneMapper.selectnum();
         System.out.println(num);
+        UserInfo userInfo = userInfoMapper.selectById2("lisi");
+        System.out.println(userInfo);
 
 
 

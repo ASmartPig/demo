@@ -21,7 +21,7 @@ import java.sql.SQLException;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "back.datasource.druid")
+//@ConfigurationProperties(prefix = "back.datasource.druid")
 @MapperScan(basePackages = BackDataBaseConfig.PACKAGE, sqlSessionFactoryRef = "backSqlSessionFactory")
 public class BackDataBaseConfig {
 
@@ -43,7 +43,7 @@ public class BackDataBaseConfig {
         druid.setDriverClassName("com.mysql.cj.jdbc.Driver");
         druid.setUsername("root");
         druid.setPassword("root");
-        druid.setUrl("jdbc:mysql://47.105.173.228:3306/user_info?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&autoReconnect=true&useSSL=false");
+        druid.setUrl("jdbc:mysql://47.105.173.228:3306/userinfo?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&autoReconnect=true&useSSL=false");
 
         //初始化时建立物理连接的个数
         druid.setInitialSize(1);

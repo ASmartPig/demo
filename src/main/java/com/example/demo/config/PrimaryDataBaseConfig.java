@@ -20,9 +20,9 @@ import java.sql.SQLException;
 /**
  * @Description: 主数据源配置类
  */
-@Component
+@Configuration
 // 前缀为primary.datasource.druid的配置信息
-@ConfigurationProperties(prefix = "primary.datasource.druid")
+//@ConfigurationProperties(prefix = "primary.datasource.druid")
 @MapperScan(basePackages = PrimaryDataBaseConfig.PACKAGE, sqlSessionFactoryRef = "primarySqlSessionFactory")
 public class PrimaryDataBaseConfig {
 
