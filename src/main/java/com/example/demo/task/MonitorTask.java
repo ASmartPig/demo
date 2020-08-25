@@ -1,16 +1,12 @@
 package com.example.demo.task;
 
 import com.example.demo.controller.BpNeuralNetworkHandle;
-import com.example.demo.dto.ServerTableOne;
 import com.example.demo.dto.UserInfo;
-import com.example.demo.mapper.ServerTableOneMapper;
-import com.example.demo.mapper.UserInfoMapper;
+import com.example.demo.dao.UserInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import java.util.Objects;
 
 @Component
 @EnableScheduling

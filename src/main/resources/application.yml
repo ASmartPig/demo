@@ -1,0 +1,45 @@
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+
+primary:
+  datasource:
+    druid:
+      filters: stat
+      driverClassName: com.mysql.jdbc.Driver
+      url: jdbc:mysql://47.92.148.144:3306/db_5e3f3fe2e06e8e246beb9d7b3a67fee4?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&autoReconnect=true&useSSL=false
+      username: ahwd_MF
+      password: Riec0shu
+      initialSize: 1
+      minIdle: 3
+      maxActive: 20
+      maxWait: 60000
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 'x'
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: false
+      maxPoolPreparedStatementPerConnectionSize: 20
+
+back:
+  datasource:
+    druid:
+      filters: stat
+      driverClassName: com.mysql.jdbc.Driver
+      url: jdbc:mysql://47.105.173.228:3306/user_info?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&autoReconnect=true&useSSL=false
+      username: root
+      password: root
+      initialSize: 1
+      minIdle: 3
+      maxActive: 20
+      maxWait: 60000
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 'x'
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: false
+      maxPoolPreparedStatementPerConnectionSize: 20
