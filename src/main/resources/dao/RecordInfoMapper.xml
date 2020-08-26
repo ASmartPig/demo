@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.RecordInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.RecordInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="predict_value" property="predictValue" jdbcType="DOUBLE" />
+    <result column="true_value" property="trueValue" jdbcType="DOUBLE" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, predict_value, true_value, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from record_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from record_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.RecordInfo" >
+    insert into record_info (id, predict_value, true_value, 
+      create_time)
+    values (#{id,jdbcType=INTEGER}, #{predictValue,jdbcType=DOUBLE}, #{trueValue,jdbcType=DOUBLE}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.RecordInfo" >
+    insert into record_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="predictValue != null" >
+        predict_value,
+      </if>
+      <if test="trueValue != null" >
+        true_value,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="predictValue != null" >
+        #{predictValue,jdbcType=DOUBLE},
+      </if>
+      <if test="trueValue != null" >
+        #{trueValue,jdbcType=DOUBLE},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.RecordInfo" >
+    update record_info
+    <set >
+      <if test="predictValue != null" >
+        predict_value = #{predictValue,jdbcType=DOUBLE},
+      </if>
+      <if test="trueValue != null" >
+        true_value = #{trueValue,jdbcType=DOUBLE},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.RecordInfo" >
+    update record_info
+    set predict_value = #{predictValue,jdbcType=DOUBLE},
+      true_value = #{trueValue,jdbcType=DOUBLE},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
