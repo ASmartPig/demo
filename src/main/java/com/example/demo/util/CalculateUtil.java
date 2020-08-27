@@ -1,4 +1,4 @@
-package com.elif.common.util;
+package com.example.demo.util;
 
 import java.math.BigDecimal;
 

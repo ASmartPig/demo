@@ -1,7 +1,7 @@
 package com.example.demo.service.impl;
 
-public interface InputServiceImpl {
+public interface InputService {
 
 
-     double predictedAndSave();
+     void predictedAndSave();
 }

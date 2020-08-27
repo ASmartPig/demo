@@ -5,6 +5,8 @@ import java.util.Date;
 public class RecordInfo {
     private Integer id;
 
+    private long rid;
+
     private Double predictValue;
 
     private Double trueValue;
@@ -41,5 +43,13 @@ public class RecordInfo {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public long getRid() {
+        return rid;
+    }
+
+    public void setRid(long rid) {
+        this.rid = rid;
     }
 }

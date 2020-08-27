@@ -18,6 +18,17 @@
     <result column="DeNOx_smoke_in_flux" jdbcType="DOUBLE" property="denoxSmokeInFlux" />
     <result column="DeNOx_smoke_in_flux_total" jdbcType="DOUBLE" property="denoxSmokeInFluxTotal" />
   </resultMap>
+
+
+<!--  <resultMap id="resMap" type="com.example.demo.dto.InputData">-->
+<!--    <id column="id" jdbcType="BIGINT" property="id" />-->
+<!--    <result column="CEMS_in_NOX" jdbcType="DOUBLE" property="inNox" />-->
+<!--    <result column="CEMS_in_so2" jdbcType="DOUBLE" property="inSo2" />-->
+<!--    <result column="CEMS_in_flux" jdbcType="DOUBLE" property="inFlux" />-->
+<!--    <result column="CEMS_in_o2" jdbcType="DOUBLE" property="inO2" />-->
+<!--    <result column="CEMS_in_temp" jdbcType="DOUBLE" property="inTemp" />-->
+<!--    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />-->
+<!--  </resultMap>-->
   <sql id="Base_Column_List">
     id, user_id, dev_group_id, dev_id, sensor_id, create_time, CEMS_out_NOX, CEMS_out_SO2, 
     DeNOx_out_temp, DeNOx_out_press, AMMONIA_escape, DeNOx_in_temp, DeNOx_in_press, DeNOx_smoke_in_flux, 
@@ -214,5 +225,20 @@
   </update>
   <select id="selectnum" resultType="java.lang.Integer">
     SELECT COUNT(1) FROM server_table_1
+  </select>
+
+  <select id="selectInput" resultType="com.example.demo.dto.InputData">
+    select id,create_time as createTime,CEMS_in_NOX as inNox,CEMS_in_so2 as inSo2,CEMS_in_flux as inFlux,CEMS_in_o2 as inO2,CEMS_in_temp as inTemp,now() as mysqlNowTime
+    from server_table_1 order by id desc limit 1
+  </select>
+
+  <select id="selectInputList" resultType="com.example.demo.dto.InputData">
+    select id,create_time as createTime,CEMS_in_NOX as inNox,CEMS_in_so2 as inSo2,CEMS_in_flux as inFlux,CEMS_in_o2 as inO2,CEMS_in_temp as inTemp,now() as mysqlNowTime
+    from server_table_1 order by id desc limit 110
+  </select>
+
+  <select id="selectInputById" resultType="com.example.demo.dto.InputData">
+   select id,create_time as createTime,CEMS_in_NOX as inNox,CEMS_in_so2 as inSo2,CEMS_in_flux as inFlux,CEMS_in_o2 as inO2,CEMS_in_temp as inTemp,now() as mysqlNowTime
+    from server_table_1 where id =#{id}
   </select>
 </mapper>

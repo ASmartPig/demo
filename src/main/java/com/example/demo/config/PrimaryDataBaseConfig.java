@@ -67,7 +67,7 @@ public class PrimaryDataBaseConfig {
         druid.setDriverClassName("com.mysql.cj.jdbc.Driver");
         druid.setUsername("ahwd_MF");
         druid.setPassword("Riec0shu");
-        druid.setUrl("jdbc:mysql://47.92.148.144:3306/db_5e3f3fe2e06e8e246beb9d7b3a67fee4?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&autoReconnect=true&useSSL=false");
+        druid.setUrl("jdbc:mysql://47.92.148.144:3306/db_5e3f3fe2e06e8e246beb9d7b3a67fee4?useUnicode=true&characterEncoding=utf-8&userSSL=false&serverTimezone=GMT%2B8");
 
         //初始化时建立物理连接的个数
         druid.setInitialSize(1);

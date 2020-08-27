@@ -1,7 +1,10 @@
 package com.example.demo.mapper;
 
+import com.example.demo.dto.InputData;
 import com.example.demo.dto.ServerTableOne;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 
 @Mapper
@@ -19,4 +22,11 @@ public interface ServerTableOneMapper {
     int updateByPrimaryKey(ServerTableOne record);
 
     int selectnum();
+
+    InputData selectInput();
+
+    List<InputData> selectInputList();
+
+    InputData selectInputById(long id);
+
 }

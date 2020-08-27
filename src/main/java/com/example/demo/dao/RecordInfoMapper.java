@@ -1,10 +1,18 @@
 package com.example.demo.dao;
 
-/**
- * @description:
- * @author: liaoze
- * @date: 2020/8/25 11:02 下午
- * @version:
- */
+
+import com.example.demo.dto.RecordInfo;
+
 public interface RecordInfoMapper {
+    int deleteByPrimaryKey(Integer id);
+
+    int insert(RecordInfo record);
+
+    int insertSelective(RecordInfo record);
+
+    RecordInfo selectByPrimaryKey(Integer id);
+
+    int updateByPrimaryKeySelective(RecordInfo record);
+
+    int updateByPrimaryKey(RecordInfo record);
 }

@@ -22,6 +22,34 @@ public class BpNeuralNetworkHandle {
     @Resource(name = "b2Value")
     private double b2Value;
 
+    @Resource(name = "xMinArray")
+    private double[] xMinArray;
+
+    @Resource(name = "xMaxArray")
+    private double[] xMaxArray;
+
+    @Resource(name = "xMinValue")
+    private double xMinValue;
+
+    @Resource(name = "xMaxValue")
+    private double xMaxValue;
+
+
+
+    private static  double yMaxValue = 1;
+
+    private static  double yMinValue = -1;
+
+    public double[] normalization(double[] inputValues){
+        double[] inputValuesNm = new double[inputValues.length];
+        for (int i = 0; i < inputValuesNm.length; i++) {
+            double xMid = xMaxArray[i] - xMinArray[i];
+            double yMid = yMaxValue - yMinValue;
+            inputValuesNm[i] = ((inputValues[i] - xMinArray[i])/xMid)* yMid + yMinValue;
+        }
+        return inputValuesNm;
+    }
+
     //long x1,long x2,double x3,double x4,double x5,double x6,double x7
     //计算预测值
     public double getPredictedValue(double[] inputValues){
@@ -53,12 +81,16 @@ public class BpNeuralNetworkHandle {
         }
         count += b2Value;
         //激励函数 x = y
-        return Math.tanh(count);
+        return count;
     }
 
-    public void printf(){
-        System.out.println(1111);
+    public double getResult(double predict){
+        double xmid = xMaxValue - xMinValue;
+        double yMid = yMaxValue - yMinValue;
+        double trueValue = ((predict-yMinValue)/yMid) * xmid+ xMinValue;
+        return trueValue;
     }
+
 
 
 }
