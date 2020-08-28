@@ -5,7 +5,7 @@ import java.util.Date;
 public class RecordInfo {
     private Integer id;
 
-    private long rid;
+    private Long rid;
 
     private Double predictValue;
 
@@ -13,12 +13,24 @@ public class RecordInfo {
 
     private Date createTime;
 
+    private Date insertTime;
+
+    private Integer belong;
+
     public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Long getRid() {
+        return rid;
+    }
+
+    public void setRid(Long rid) {
+        this.rid = rid;
     }
 
     public Double getPredictValue() {
@@ -45,11 +57,19 @@ public class RecordInfo {
         this.createTime = createTime;
     }
 
-    public long getRid() {
-        return rid;
+    public Date getInsertTime() {
+        return insertTime;
     }
 
-    public void setRid(long rid) {
-        this.rid = rid;
+    public void setInsertTime(Date insertTime) {
+        this.insertTime = insertTime;
+    }
+
+    public Integer getBelong() {
+        return belong;
+    }
+
+    public void setBelong(Integer belong) {
+        this.belong = belong;
     }
 }

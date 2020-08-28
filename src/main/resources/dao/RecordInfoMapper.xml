@@ -1,83 +1,134 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.example.demo.dao.RecordInfoMapper" >
-  <resultMap id="BaseResultMap" type="com.example.demo.dto.RecordInfo" >
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="rid" property="rid" jdbcType="BIGINT" />
-    <result column="predict_value" property="predictValue" jdbcType="DOUBLE" />
-    <result column="true_value" property="trueValue" jdbcType="DOUBLE" />
-    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.RecordInfoMapper">
+  <resultMap id="BaseResultMap" type="com.example.demo.dto.RecordInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="rid" jdbcType="BIGINT" property="rid" />
+    <result column="predict_value" jdbcType="DOUBLE" property="predictValue" />
+    <result column="true_value" jdbcType="DOUBLE" property="trueValue" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="insert_time" jdbcType="TIMESTAMP" property="insertTime" />
+    <result column="belong" jdbcType="INTEGER" property="belong" />
   </resultMap>
-  <sql id="Base_Column_List" >
-    id, predict_value, true_value, create_time
+  <sql id="Base_Column_List">
+    id, rid, predict_value, true_value, create_time, insert_time, belong
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from record_info
     where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from record_info
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.example.demo.dto.RecordInfo" >
-    insert into record_info (id, rid, predict_value, true_value,
-      create_time)
-    values (#{id,jdbcType=INTEGER}, #{rid,jdbcType=BIGINT}, #{predictValue,jdbcType=DOUBLE}, #{trueValue,jdbcType=DOUBLE},
-      #{createTime,jdbcType=TIMESTAMP})
+  <insert id="insert" parameterType="com.example.demo.dto.RecordInfo">
+    insert into record_info (id, rid, predict_value, 
+      true_value, create_time, insert_time, 
+      belong)
+    values (#{id,jdbcType=INTEGER}, #{rid,jdbcType=BIGINT}, #{predictValue,jdbcType=DOUBLE}, 
+      #{trueValue,jdbcType=DOUBLE}, #{createTime,jdbcType=TIMESTAMP}, #{insertTime,jdbcType=TIMESTAMP}, 
+      #{belong,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.example.demo.dto.RecordInfo" >
+  <insert id="insertSelective" parameterType="com.example.demo.dto.RecordInfo">
     insert into record_info
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
         id,
       </if>
-      <if test="predictValue != null" >
+      <if test="rid != null">
+        rid,
+      </if>
+      <if test="predictValue != null">
         predict_value,
       </if>
-      <if test="trueValue != null" >
+      <if test="trueValue != null">
         true_value,
       </if>
-      <if test="createTime != null" >
+      <if test="createTime != null">
         create_time,
       </if>
+      <if test="insertTime != null">
+        insert_time,
+      </if>
+      <if test="belong != null">
+        belong,
+      </if>
     </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="predictValue != null" >
+      <if test="rid != null">
+        #{rid,jdbcType=BIGINT},
+      </if>
+      <if test="predictValue != null">
         #{predictValue,jdbcType=DOUBLE},
       </if>
-      <if test="trueValue != null" >
+      <if test="trueValue != null">
         #{trueValue,jdbcType=DOUBLE},
       </if>
-      <if test="createTime != null" >
+      <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="insertTime != null">
+        #{insertTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="belong != null">
+        #{belong,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.dto.RecordInfo" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.dto.RecordInfo">
     update record_info
-    <set >
-      <if test="predictValue != null" >
+    <set>
+      <if test="rid != null">
+        rid = #{rid,jdbcType=BIGINT},
+      </if>
+      <if test="predictValue != null">
         predict_value = #{predictValue,jdbcType=DOUBLE},
       </if>
-      <if test="trueValue != null" >
+      <if test="trueValue != null">
         true_value = #{trueValue,jdbcType=DOUBLE},
       </if>
-      <if test="createTime != null" >
+      <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="insertTime != null">
+        insert_time = #{insertTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="belong != null">
+        belong = #{belong,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.example.demo.dto.RecordInfo" >
+  <update id="updateByPrimaryKey" parameterType="com.example.demo.dto.RecordInfo">
     update record_info
-    set predict_value = #{predictValue,jdbcType=DOUBLE},
+    set rid = #{rid,jdbcType=BIGINT},
+      predict_value = #{predictValue,jdbcType=DOUBLE},
       true_value = #{trueValue,jdbcType=DOUBLE},
-      create_time = #{createTime,jdbcType=TIMESTAMP}
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      insert_time = #{insertTime,jdbcType=TIMESTAMP},
+      belong = #{belong,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="selectByTime" resultType="com.example.demo.dto.RecordInfo">
+    select <include refid="Base_Column_List"></include>
+    from record_info
+    <where>
+      <if test="startTime != null and startTime !=''">
+        <![CDATA[
+              and create_time >= #{startTime,jdbcType=VARCHAR}
+              ]]>
+      </if>
+      <if test="endTime != null and endTime !=''">
+        <![CDATA[
+              and create_time <= #{endTime,jdbcType=VARCHAR}
+              ]]>
+      </if>
+    </where>
+  </select>
 </mapper>

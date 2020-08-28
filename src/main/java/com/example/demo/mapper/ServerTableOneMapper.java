@@ -3,6 +3,7 @@ package com.example.demo.mapper;
 import com.example.demo.dto.InputData;
 import com.example.demo.dto.ServerTableOne;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ public interface ServerTableOneMapper {
 
     InputData selectInput();
 
-    List<InputData> selectInputList();
+    List<InputData> selectInputList(@Param("startTime") String startTime, @Param("endTime")String endTime);
 
     InputData selectInputById(long id);
 

@@ -35,9 +35,9 @@ public class MonitorTask {
     //@Scheduled(cron = "0 */2 * * * ?")
     @Scheduled(cron = "* */1 * * * ?")
     public void predicted(){
-        log.info("predicted start ..");
-        inputService.predictedAndSave();
-        log.info("predicted end ..");
+//        log.info("predicted start ..");
+//        inputService.predictedAndSave();
+//        log.info("predicted end ..");
 
     }
 }

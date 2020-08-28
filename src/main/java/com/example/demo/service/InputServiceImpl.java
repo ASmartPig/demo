@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class InputServiceImpl implements InputService {
@@ -33,7 +35,19 @@ public class InputServiceImpl implements InputService {
 
     @Override
     public void predictedAndSave() {
-        InputData inp = serverTableOneMapper.selectInputById(1268109756596225l);
+        InputData inp = serverTableOneMapper.selectInput();
+        handle(inp);
+    }
+
+    @Override
+    public void predictedAndSave(String start, String end) {
+        List<InputData> inputDataList =  serverTableOneMapper.selectInputList(start,end);
+        for (InputData inputData : inputDataList){
+            handle(inputData);
+        }
+    }
+
+    private void handle(InputData inp){
         LocalDateTime localDateTime = DateUtil.toLocalDateTime(inp.getCreateTime());
         int min = localDateTime.getMinute();
         Duration durationA = null;
@@ -79,14 +93,44 @@ public class InputServiceImpl implements InputService {
 
         double predict = bpNeuralNetworkHandle.getPredictedValue(inputValuesNm);
         double trueValue = bpNeuralNetworkHandle.getResult(predict);
-        System.out.println(JSON.toJSONString(inp) + "==" + predict + "==" + DateUtil.getStringTime(inp.getCreateTime(), DateUtil.DEFAULT_DATETIME_PATTERN));
+        System.out.println(JSON.toJSONString(inp) + "==" + trueValue + "==" + DateUtil.getStringTime(inp.getCreateTime(), DateUtil.DEFAULT_DATETIME_PATTERN));
 
         RecordInfo recordInfo = new RecordInfo();
+        //server table 1的值
         recordInfo.setRid(inp.getId());
-        recordInfo.setPredictValue(predict);
-        recordInfo.setTrueValue(inp.getInNox());
-        recordInfo.setCreateTime(new Date());
+        //预测值
+        recordInfo.setPredictValue(trueValue);
+        recordInfo.setTrueValue(-1d);
+        //server table 1 数据 生成时间
+        recordInfo.setCreateTime(inp.getCreateTime());
+        if (inp.getInO2()>15){
+            //吹气
+            recordInfo.setBelong(2);
+        }else if (inp.getInNox() >1200){
+            //标气
+            recordInfo.setBelong(3);
+        }else{
+            //正常
+            recordInfo.setBelong(1);
+        }
+        //数据插入时间
+        recordInfo.setInsertTime(new Date());
+        //插入预测值
         recordInfoMapper.insert(recordInfo);
+
+        //获取5分钟后的真实值
+        LocalDateTime dateTime =  DateUtil.toLocalDateTime(inp.getCreateTime());
+        String start = DateUtil.getStringTime(dateTime.plusSeconds(-310),DateUtil.DEFAULT_DATETIME_PATTERN);
+        String end = DateUtil.getStringTime(dateTime.plusSeconds(-290),DateUtil.DEFAULT_DATETIME_PATTERN);;
+        RecordInfo updateRecord = recordInfoMapper.selectByTime(start,end);
+        if (Objects.nonNull(updateRecord)){
+            updateRecord.setTrueValue(inp.getInNox());
+            recordInfoMapper.updateByPrimaryKeySelective(updateRecord);
+        }
+
+
+
+
     }
 
 

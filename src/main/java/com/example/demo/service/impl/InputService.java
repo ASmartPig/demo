@@ -4,4 +4,6 @@ public interface InputService {
 
 
      void predictedAndSave();
+
+     void predictedAndSave(String start,String end);
 }

@@ -13,7 +13,7 @@ class DemoApplicationTests {
 
     @Test
     void contextLoads() {
-        inputService.predictedAndSave();
+        inputService.predictedAndSave("2020-08-27 12:32:35","2020-08-27 13:22:09");
     }
 
 }
