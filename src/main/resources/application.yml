@@ -43,3 +43,9 @@ back:
       testOnReturn: false
       poolPreparedStatements: false
       maxPoolPreparedStatementPerConnectionSize: 20
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: *

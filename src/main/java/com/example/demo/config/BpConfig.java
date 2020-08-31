@@ -8,9 +8,9 @@ import java.io.*;
 @Configuration
 public class BpConfig {
 
-    private static String path = "/Users/liaoze/Documents/1.txt";
+    //private static String path = "/Users/liaoze/Documents/1.txt";
 
-    //sprivate static String path = "C:/Users/Lenovo/Desktop/1.txt";
+    private static String path = "C:/Users/Lenovo/Desktop/1.txt";
 
 
     @Bean(name = "inputWeight")

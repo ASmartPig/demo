@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.config.BpConfig;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.*;
 
@@ -17,6 +18,8 @@ public class MainTest {
         double[][] inputWeight = (double[][]) applicationContext.getBean("inputWeight");
         //System.out.println(inputWeight.length);
         System.out.println(((10 - 1) * 8)/138.7516);
+
+        //new ClassPathXmlApplicationContext()
     }
     public static double Mytanh(double value) {
         double ex = Math.pow(Math.E, value);// e^x
