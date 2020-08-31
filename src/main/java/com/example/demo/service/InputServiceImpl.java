@@ -9,6 +9,7 @@ import com.example.demo.dto.RecordInfo;
 import com.example.demo.mapper.ServerTableOneMapper;
 import com.example.demo.service.impl.InputService;
 import com.example.demo.util.DateUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Service
 public class InputServiceImpl implements InputService {
 
@@ -28,15 +30,31 @@ public class InputServiceImpl implements InputService {
     private ServerTableOneMapper serverTableOneMapper;
 
     @Autowired
-    private UserInfoMapper userInfoMapper;
-
-    @Autowired
     private RecordInfoMapper recordInfoMapper;
+
+    //真实所需氨水因子
+    private static double ratio = 1.5;
+
+    //真实所需氨水常数
+    private static double constant = 10;
+
+    //排放标准值
+    private static double standardValue = 100;
+
+    //比例
+    private static double k = 138.7516;
 
     @Override
     public void predictedAndSave() {
         InputData inp = serverTableOneMapper.selectInput();
-        handle(inp);
+        long rid = inp.getId();
+        log.info("predictedAndSave rid:{}",rid);
+        RecordInfo recordInfo = recordInfoMapper.selectByRid(inp.getId());
+        if (Objects.isNull(recordInfo)){
+            log.info("predictedAndSave handle:{}",rid);
+            handle(inp);
+        }
+
     }
 
     @Override
@@ -48,6 +66,7 @@ public class InputServiceImpl implements InputService {
     }
 
     private void handle(InputData inp){
+        log.info("handle start ... inp:{}",JSON.toJSONString(inp));
         LocalDateTime localDateTime = DateUtil.toLocalDateTime(inp.getCreateTime());
         int min = localDateTime.getMinute();
         Duration durationA = null;
@@ -92,14 +111,21 @@ public class InputServiceImpl implements InputService {
         double[] inputValuesNm = bpNeuralNetworkHandle.normalization(inputData);
 
         double predict = bpNeuralNetworkHandle.getPredictedValue(inputValuesNm);
-        double trueValue = bpNeuralNetworkHandle.getResult(predict);
-        System.out.println(JSON.toJSONString(inp) + "==" + trueValue + "==" + DateUtil.getStringTime(inp.getCreateTime(), DateUtil.DEFAULT_DATETIME_PATTERN));
+        double predictValue = bpNeuralNetworkHandle.reverseNormalization(predict);
+        //氨水质量
+        double NH3 = (predictValue - standardValue) * inp.getInFlux() / k;
+
+        //实际氨水质量
+        double actualNH3 = NH3 * ratio + constant;
+        log.info("ratio :{},constant:{},standardValue:{}",ratio,constant,standardValue);
+        log.info("inp id:{},predict:{},predictValue:{},NH3:{},actualNH3:{}",inp.getId(),predict,predictValue,NH3,actualNH3);
 
         RecordInfo recordInfo = new RecordInfo();
         //server table 1的值
         recordInfo.setRid(inp.getId());
         //预测值
-        recordInfo.setPredictValue(trueValue);
+        recordInfo.setPredictValue(predictValue);
+        //初始化真实值-1
         recordInfo.setTrueValue(-1d);
         //server table 1 数据 生成时间
         recordInfo.setCreateTime(inp.getCreateTime());
@@ -118,7 +144,7 @@ public class InputServiceImpl implements InputService {
         //插入预测值
         recordInfoMapper.insert(recordInfo);
 
-        //获取5分钟后的真实值
+        //获取5分钟后(加减10s)的真实值
         LocalDateTime dateTime =  DateUtil.toLocalDateTime(inp.getCreateTime());
         String start = DateUtil.getStringTime(dateTime.plusSeconds(-310),DateUtil.DEFAULT_DATETIME_PATTERN);
         String end = DateUtil.getStringTime(dateTime.plusSeconds(-290),DateUtil.DEFAULT_DATETIME_PATTERN);;

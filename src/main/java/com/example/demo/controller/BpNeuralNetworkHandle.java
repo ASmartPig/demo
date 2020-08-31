@@ -84,10 +84,10 @@ public class BpNeuralNetworkHandle {
         return count;
     }
 
-    public double getResult(double predict){
-        double xmid = xMaxValue - xMinValue;
+    public double reverseNormalization(double predict){
+        double xMid = xMaxValue - xMinValue;
         double yMid = yMaxValue - yMinValue;
-        double trueValue = ((predict-yMinValue)/yMid) * xmid+ xMinValue;
+        double trueValue = ((predict - yMinValue)/yMid) * xMid + xMinValue;
         return trueValue;
     }
 

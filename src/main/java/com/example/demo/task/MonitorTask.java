@@ -32,12 +32,11 @@ public class MonitorTask {
     @Autowired
     private InputService inputService;
 
-    //@Scheduled(cron = "0 */2 * * * ?")
-    @Scheduled(cron = "* */1 * * * ?")
+    @Scheduled(cron = "*/30 * * * * ?")
     public void predicted(){
-//        log.info("predicted start ..");
-//        inputService.predictedAndSave();
-//        log.info("predicted end ..");
+        log.info("predicted start ..");
+        inputService.predictedAndSave();
+        log.info("predicted end ..");
 
     }
 }
