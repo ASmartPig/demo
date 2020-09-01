@@ -1,6 +1,7 @@
 package com.example.demo.task;
 
 
+import com.example.demo.util.DateUtil;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.TriggerContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -24,7 +25,7 @@ public class DynamicScheduledTask implements SchedulingConfigurer {
         scheduledTaskRegistrar.addTriggerTask(new Runnable() {
             @Override
             public void run() {
-                System.out.println("-----");
+                //System.out.println(DateUtil.getStringTime(new Date(),DateUtil.DEFAULT_DATETIME_PATTERN));
             }
         }, new Trigger() {
             @Override

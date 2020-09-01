@@ -1,3 +1,9 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
@@ -6,8 +12,8 @@ primary:
   datasource:
     druid:
       filters: stat
-      driverClassName: com.mysql.jdbc.Driver
-      url: jdbc:mysql://47.92.148.144:3306/db_5e3f3fe2e06e8e246beb9d7b3a67fee4?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&autoReconnect=true&useSSL=false
+      driverClassName: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://47.92.148.144:3306/db_5e3f3fe2e06e8e246beb9d7b3a67fee4?useUnicode=true&characterEncoding=utf-8&userSSL=false&serverTimezone=GMT%2B8
       username: ahwd_MF
       password: Riec0shu
       initialSize: 1
@@ -27,8 +33,8 @@ back:
   datasource:
     druid:
       filters: stat
-      driverClassName: com.mysql.jdbc.Driver
-      url: jdbc:mysql://47.105.173.228:3306/user_info?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&autoReconnect=true&useSSL=false
+      driverClassName: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://47.105.173.228:3306/userinfo?useUnicode=true&characterEncoding=utf-8&userSSL=false&serverTimezone=GMT%2B8
       username: root
       password: root
       initialSize: 1
@@ -43,9 +49,3 @@ back:
       testOnReturn: false
       poolPreparedStatements: false
       maxPoolPreparedStatementPerConnectionSize: 20
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: *
