@@ -1,5 +1,6 @@
 package com.example.demo.task;
 
+import com.example.demo.controller.OpcHandler;
 import com.example.demo.service.impl.InputService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,13 @@ public class MonitorTask {
     @Autowired
     private InputService inputService;
 
+    @Autowired
+    private OpcHandler opcHandler;
+
     @Scheduled(cron = "*/30 * * * * ?")
     public void predicted(){
         log.info("predicted start ..");
-        inputService.predictedAndSave();
+        opcHandler.read();
         log.info("predicted end ..");
 
     }
