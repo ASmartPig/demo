@@ -9,12 +9,24 @@ public enum CEMS {
 
     private String str;
 
-    public String getStr() {
-        return str;
+    CEMS() {
+    }
+
+    public static CEMS valueOfStr(String str) {
+        for (CEMS obj : CEMS.values()) {
+            if (java.util.Objects.equals(obj.str, str)) {
+                return obj;
+            }
+        }
+        return null;
     }
 
 
     CEMS(String str) {
         this.str = str;
+    }
+
+    public String getStr() {
+        return str;
     }
 }
