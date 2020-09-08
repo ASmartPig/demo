@@ -2,10 +2,12 @@ package com.example.demo.service;
 
 import com.alibaba.fastjson.JSON;
 import com.example.demo.controller.BpNeuralNetworkHandle;
+import com.example.demo.controller.OpcHandler;
 import com.example.demo.dao.RecordInfoMapper;
 import com.example.demo.dao.UserInfoMapper;
 import com.example.demo.dto.InputData;
 import com.example.demo.dto.RecordInfo;
+import com.example.demo.enums.CEMS;
 import com.example.demo.mapper.ServerTableOneMapper;
 import com.example.demo.service.impl.InputService;
 import com.example.demo.util.DateUtil;
@@ -15,9 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -31,6 +31,9 @@ public class InputServiceImpl implements InputService {
 
     @Autowired
     private RecordInfoMapper recordInfoMapper;
+
+    @Autowired
+    private OpcHandler opcHandler;
 
     //真实所需氨水因子
     private static double ratio = 1.5;
@@ -63,6 +66,21 @@ public class InputServiceImpl implements InputService {
         for (InputData inputData : inputDataList){
             handle(inputData);
         }
+    }
+
+
+    @Override
+    public void predictedAndSave(Map<String,Double> map) {
+        InputData inp = new InputData();
+        inp.setInNox(map.get(CEMS.CEMS_in_NOX.getStr()));
+        inp.setInSo2(map.get(CEMS.CEMS_in_SO2.getStr()));
+        inp.setInO2(map.get(CEMS.CEMS_in_O2.getStr()));
+        inp.setInFlux(map.get(CEMS.CEMS_in_flux.getStr()));
+        inp.setInTemp(map.get(CEMS.CEMS_in_temp.getStr()));
+        inp.setCreateTime(new Date());
+        handle(inp);
+
+
     }
 
     private void handle(InputData inp){
@@ -125,6 +143,7 @@ public class InputServiceImpl implements InputService {
         recordInfo.setRid(inp.getId());
         //预测值
         recordInfo.setPredictValue(predictValue);
+        opcHandler.wirte(predictValue);
         //初始化真实值-1
         recordInfo.setTrueValue(-1d);
         //server table 1 数据 生成时间

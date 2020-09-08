@@ -1,5 +1,6 @@
 package com.example.demo.connect;
 
+import com.example.demo.enums.CEMS;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.JIVariant;
 import org.openscada.opc.dcom.list.ClassDetails;
@@ -37,17 +38,17 @@ public class UtgardTutorialTest {
             e.printStackTrace();
         }
 
-        Group group = server.addGroup();
-        Item item = group.addItem("group_two.item_two");
+        Group group = server.addGroup("input");
 
-        Map<String, Item> items = group.addItems(
-                "group_two.item_two");
 
-        dumpItem(item);
+        Map<String, Item> items = group.addItems(CEMS.CEMS_in_NOX.getStr(),CEMS.CEMS_in_SO2.getStr(),
+                CEMS.CEMS_in_flux.getStr(),CEMS.CEMS_in_O2.getStr(),CEMS.CEMS_in_temp.getStr());
 
-//        for (Map.Entry<String, Item> temp : items.entrySet()) {
-//            dumpItem(temp.getValue());
-//        }
+       // dumpItem(item);
+
+ for (Map.Entry<String, Item> temp : items.entrySet()) {
+            dumpItem(temp.getValue());
+        }
 
         server.dispose();
     }
