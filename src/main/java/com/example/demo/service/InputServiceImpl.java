@@ -137,13 +137,16 @@ public class InputServiceImpl implements InputService {
         double actualNH3 = NH3 * ratio + constant;
         log.info("ratio :{},constant:{},standardValue:{}",ratio,constant,standardValue);
         log.info("inp id:{},predict:{},predictValue:{},NH3:{},actualNH3:{}",inp.getId(),predict,predictValue,NH3,actualNH3);
+        //向opc server 写数据
+        opcHandler.wirte(actualNH3);
+
+
 
         RecordInfo recordInfo = new RecordInfo();
         //server table 1的值
         recordInfo.setRid(inp.getId());
         //预测值
         recordInfo.setPredictValue(predictValue);
-        opcHandler.wirte(predictValue);
         //初始化真实值-1
         recordInfo.setTrueValue(-1d);
         //server table 1 数据 生成时间

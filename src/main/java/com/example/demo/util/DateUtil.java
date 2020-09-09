@@ -367,6 +367,21 @@ public class DateUtil {
      * @Description: Date转String
      * @Date: 2020/4/28
      * @param date
+     * @Return: java.lang.String
+     **/
+    public static String getStringTime(Date date){
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DateUtil.DEFAULT_DATETIME_PATTERN);
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zoneId);
+        return dateTimeFormatter.format(localDateTime);
+    }
+
+    /**
+     * @Author: liaoze
+     * @Description: Date转String
+     * @Date: 2020/4/28
+     * @param date
      * @param pattern
      * @Return: java.lang.String
      **/
