@@ -43,7 +43,7 @@ public class BackDataBaseConfig {
         druid.setDriverClassName("com.mysql.cj.jdbc.Driver");
         druid.setUsername("root");
         druid.setPassword("root");
-        druid.setUrl("jdbc:mysql://47.105.173.228:3306/userinfo?useUnicode=true&characterEncoding=utf-8&userSSL=false&serverTimezone=GMT%2B8");
+        druid.setUrl("jdbc:mysql://localhost:3306/weida?useUnicode=true&characterEncoding=utf-8&userSSL=false&serverTimezone=GMT%2B8");
 
         //初始化时建立物理连接的个数
         druid.setInitialSize(1);
