@@ -30,4 +30,6 @@ public interface ServerTableOneMapper {
 
     InputData selectInputById(long id);
 
+    Double selectAvgFlux(@Param("startTime") String startTime, @Param("endTime")String endTime);
+
 }

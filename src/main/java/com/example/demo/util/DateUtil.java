@@ -393,7 +393,17 @@ public class DateUtil {
         return dateTimeFormatter.format(localDateTime);
     }
 
-
+    /**
+     * @Author: liaoze
+     * @Description: LocalDateTime转String
+     * @Date: 2020/4/28
+     * @param date
+     * @Return: java.lang.String
+     **/
+    public static String getStringTime(LocalDateTime date){
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DateUtil.DEFAULT_DATETIME_PATTERN);
+        return dateTimeFormatter.format(date);
+    }
     /**
      * @Author: liaoze
      * @Description: LocalDateTime转String

@@ -47,6 +47,9 @@ public class InputServiceImpl implements InputService {
     //比例
     private static double k = 138.7516;
 
+    //值p-直排和总量的比例
+    private static double p = 0.11;
+
     @Override
     public void predictedAndSave() {
         InputData inp = serverTableOneMapper.selectInput();
@@ -75,11 +78,12 @@ public class InputServiceImpl implements InputService {
         inp.setInNox(map.get(CEMS.CEMS_in_NOX.getStr()));
         inp.setInSo2(map.get(CEMS.CEMS_in_SO2.getStr()));
         inp.setInO2(map.get(CEMS.CEMS_in_O2.getStr()));
-        inp.setInFlux(map.get(CEMS.CEMS_in_flux.getStr()));
+        //15分钟流量平均值
+        double flux = serverTableOneMapper.selectAvgFlux(DateUtil.getStringTime(LocalDateTime.now().plusSeconds(-900)),DateUtil.getStringTime(LocalDateTime.now()));
+        inp.setInFlux(flux);
         inp.setInTemp(map.get(CEMS.CEMS_in_temp.getStr()));
         inp.setCreateTime(new Date());
         handle(inp);
-
 
     }
 
@@ -130,8 +134,11 @@ public class InputServiceImpl implements InputService {
 
         double predict = bpNeuralNetworkHandle.getPredictedValue(inputValuesNm);
         double predictValue = bpNeuralNetworkHandle.reverseNormalization(predict);
+        //真实需要排放的NOX标准
+        double x = (1 + p) * standardValue - p * inp.getInNox();
+
         //氨水质量
-        double NH3 = (predictValue - standardValue) * inp.getInFlux() / k;
+        double NH3 = (predictValue - x) * inp.getInFlux() / k;
 
         //实际氨水质量
         double actualNH3 = NH3 * ratio + constant;
@@ -139,8 +146,6 @@ public class InputServiceImpl implements InputService {
         log.info("inp id:{},predict:{},predictValue:{},NH3:{},actualNH3:{}",inp.getId(),predict,predictValue,NH3,actualNH3);
         //向opc server 写数据
         opcHandler.wirte(actualNH3);
-
-
 
         RecordInfo recordInfo = new RecordInfo();
         //server table 1的值
