@@ -7,6 +7,10 @@ public class RecordInfo {
 
     private Long rid;
 
+    private Long ATime;
+
+    private Long BTime;
+
     private Double inNox;
 
     private Double inSo2;
@@ -121,5 +125,21 @@ public class RecordInfo {
 
     public void setInTemp(Double inTemp) {
         this.inTemp = inTemp;
+    }
+
+    public Long getATime() {
+        return ATime;
+    }
+
+    public void setATime(Long ATime) {
+        this.ATime = ATime;
+    }
+
+    public Long getBTime() {
+        return BTime;
+    }
+
+    public void setBTime(Long BTime) {
+        this.BTime = BTime;
     }
 }

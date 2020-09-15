@@ -4,6 +4,13 @@
   <resultMap id="BaseResultMap" type="com.example.demo.dto.RecordInfo">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="rid" jdbcType="BIGINT" property="rid" />
+    <result column="CEMS_in_NOX" jdbcType="DOUBLE" property="inNox" />
+    <result column="CEMS_in_so2" jdbcType="DOUBLE" property="inSo2" />
+    <result column="CEMS_in_flux" jdbcType="DOUBLE" property="inFlux" />
+    <result column="CEMS_in_o2" jdbcType="DOUBLE" property="inO2" />
+    <result column="CEMS_in_temp" jdbcType="DOUBLE" property="inTemp" />
+    <result column="A_time" jdbcType="BIGINT" property="ATime" />
+    <result column="B_time" jdbcType="BIGINT" property="BTime" />
     <result column="predict_value" jdbcType="DOUBLE" property="predictValue" />
     <result column="true_value" jdbcType="DOUBLE" property="trueValue" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -24,11 +31,11 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.example.demo.dto.RecordInfo">
-    insert into record_info (id, rid, predict_value, 
+    insert into record_info (id, rid,CEMS_in_NOX,CEMS_in_so2,CEMS_in_flux,CEMS_in_o2,CEMS_in_temp,A_time,B_time,predict_value,
       true_value, create_time, insert_time, 
       belong)
-    values (#{id,jdbcType=INTEGER}, #{rid,jdbcType=BIGINT}, #{predictValue,jdbcType=DOUBLE}, 
-      #{trueValue,jdbcType=DOUBLE}, #{createTime,jdbcType=TIMESTAMP}, #{insertTime,jdbcType=TIMESTAMP}, 
+    values (#{id,jdbcType=INTEGER}, #{rid,jdbcType=BIGINT}, #{inNox,jdbcType=DOUBLE}, #{inSo2,jdbcType=DOUBLE},
+     #{inFlux,jdbcType=DOUBLE}, #{inO2,jdbcType=DOUBLE}, #{inTemp,jdbcType=DOUBLE},#{ATime,jdbcType=BIGINT},#{BTime,jdbcType=BIGINT}, #{predictValue,jdbcType=DOUBLE},  #{trueValue,jdbcType=DOUBLE}, #{createTime,jdbcType=TIMESTAMP}, #{insertTime,jdbcType=TIMESTAMP},
       #{belong,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.example.demo.dto.RecordInfo">

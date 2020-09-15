@@ -39,9 +39,6 @@ public class TrainServiceImpl implements TrainService {
     @Qualifier("inputWeight")
     private double[][] inputWeight;
 
-
-
-
     @Override
     public void train() {
         log.info("TrainServiceImpl start ...");
@@ -57,15 +54,15 @@ public class TrainServiceImpl implements TrainService {
                 double predict;
                 double trueValue;
                 double[] inputValues;
-                double outPutError = bpNeuralNetworkHandle.getOutError(predict, trueValue);
+               // double outPutError = bpNeuralNetworkHandle.getOutError(predict, trueValue);
                 //2、获取隐藏值的输入值
-                double[] hiddenInput = bpNeuralNetworkHandle.getHiddenInput(inputValues);
+                //double[] hiddenInput = bpNeuralNetworkHandle.getHiddenInput(inputValues);
                 //3、获取隐含层的误差；
-                double[] hide_error = bpNeuralNetworkHandle.getHideError(outPutError, outputWeight, hiddenInput);
+                //double[] hide_error = bpNeuralNetworkHandle.getHideError(outPutError, outputWeight, hiddenInput);
                 //4、更新输入层->隐含层权值
-                bpNeuralNetworkHandle.updateWeight(inputWeight,inputValues,hide_error);
-                //5、更新隐含层->输出层权值
-                bpNeuralNetworkHandle.updateWeight(inputWeight,inputValues,hide_error);
+//                bpNeuralNetworkHandle.updateWeight(inputWeight,inputValues,hide_error);
+//                //5、更新隐含层->输出层权值
+//                bpNeuralNetworkHandle.updateWeight(inputWeight,inputValues,hide_error);
         }
 
     }

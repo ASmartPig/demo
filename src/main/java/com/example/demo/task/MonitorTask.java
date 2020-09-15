@@ -47,7 +47,7 @@ public class MonitorTask implements SchedulingConfigurer {
             @Override
             public void run() {
                 log.info("train start ..");
-                trainService.train();
+               // trainService.train();
                 log.info("train end ..");
 
 

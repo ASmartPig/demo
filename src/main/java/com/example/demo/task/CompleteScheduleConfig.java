@@ -44,11 +44,9 @@ public class CompleteScheduleConfig implements SchedulingConfigurer {
 //        Map<String,Double> map = opcHandler.read();
 //        inputService.predictedAndSave( map);
 
-       inputService.predictedAndSave();
 
-
-
-                log.info("predicted end ..");
+           // inputService.predictedAndSave();
+            log.info("predicted end ..");
 
 
             }

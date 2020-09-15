@@ -122,6 +122,9 @@ public class InputServiceImpl implements InputService {
             durationB = Duration.between(ATime, localDateTime);
         }
 
+        //15分钟流量平均值
+        //double flux = serverTableOneMapper.selectAvgFlux(DateUtil.getStringTime(LocalDateTime.now().plusSeconds(-900)),DateUtil.getStringTime(LocalDateTime.now()));
+
         double[] inputData = new double[7];
         inputData[0] = durationA.getSeconds();
         inputData[1] = durationB.getSeconds();
@@ -130,6 +133,17 @@ public class InputServiceImpl implements InputService {
         inputData[4] = inp.getInFlux();
         inputData[5] = inp.getInO2();
         inputData[6] = inp.getInTemp();
+
+        //输入数据
+        RecordInfo recordInfo = new RecordInfo();
+        recordInfo.setInNox(inp.getInNox());
+        recordInfo.setInSo2(inp.getInSo2());
+        recordInfo.setInFlux(inp.getInFlux());
+        recordInfo.setInO2(inp.getInO2());
+        recordInfo.setInTemp(inp.getInTemp());
+        recordInfo.setATime(durationA.getSeconds());
+        recordInfo.setBTime(durationB.getSeconds());
+
         double[] inputValuesNm = bpNeuralNetworkHandle.normalization(inputData);
 
         double predict = bpNeuralNetworkHandle.getPredictedValue(inputValuesNm);
@@ -147,8 +161,7 @@ public class InputServiceImpl implements InputService {
         //向opc server 写数据
         opcHandler.wirte(actualNH3);
 
-        RecordInfo recordInfo = new RecordInfo();
-        //server table 1的值
+        //server table 1 id值
         recordInfo.setRid(inp.getId());
         //预测值
         recordInfo.setPredictValue(predictValue);
@@ -168,6 +181,8 @@ public class InputServiceImpl implements InputService {
         }
         //数据插入时间
         recordInfo.setInsertTime(new Date());
+
+
         //插入预测值
         recordInfoMapper.insert(recordInfo);
 
