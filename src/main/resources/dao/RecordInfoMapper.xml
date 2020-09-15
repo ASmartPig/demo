@@ -131,4 +131,22 @@
       </if>
     </where>
   </select>
+
+
+    <select id="selectTrainData" resultType="com.example.demo.dto.RecordInfo">
+      select <include refid="Base_Column_List"></include>
+      from record_info
+      <where>
+        <if test="startTime != null and startTime !=''">
+          <![CDATA[
+              and create_time >= #{startTime,jdbcType=VARCHAR}
+              ]]>
+        </if>
+        <if test="endTime != null and endTime !=''">
+          <![CDATA[
+              and create_time <= #{endTime,jdbcType=VARCHAR}
+              ]]>
+        </if>
+      </where>
+    </select>
 </mapper>

@@ -5,6 +5,8 @@ import com.example.demo.dto.RecordInfo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 public interface RecordInfoMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -22,4 +24,6 @@ public interface RecordInfoMapper {
 
     @Select("select * from record_info where rid =#{rid}")
     RecordInfo selectByRid(long rid);
+
+    List<RecordInfo> selectTrainData(@Param("startTime") String startTime, @Param("endTime")String endTime);
 }

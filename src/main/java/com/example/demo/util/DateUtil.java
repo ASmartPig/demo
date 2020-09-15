@@ -54,39 +54,40 @@ public class DateUtil {
      */
     public static long startOfDay(Date date) {
         LocalDateTime localDateTime = toLocalDateTime(date)
-                .withHour(5)
+                .withHour(0)
                 .withMinute(0)
                 .withSecond(0)
                 .withNano(0);
         return localDateTime.atZone(systemDefault()).toInstant().toEpochMilli();
     }
 
-    public static long startOfDayY(Date date){
-        LocalDateTime localDateTime = toLocalDateTime(date).plusDays(-1)
-                .withHour(5)
+    /**
+     * @Author: liaoze
+     * @Description: 开始时间
+     * @Return: java.lang.String
+     **/
+    public static String startDay(Date date) {
+        LocalDateTime localDateTime = toLocalDateTime(date)
+                .withHour(0)
                 .withMinute(0)
                 .withSecond(0)
                 .withNano(0);
-        return localDateTime.atZone(systemDefault()).toInstant().toEpochMilli();
+        return DateUtil.getStringTime(localDateTime);
     }
 
-    public static long startOfDayQ(Date date){
-        LocalDateTime localDateTime = toLocalDateTime(date).plusDays(-2)
-                .withHour(5)
+    /**
+     * @Description: 开始时间
+     * @Return: java.util.Date
+     **/
+    public static String startDay(Date date ,int day) {
+        LocalDateTime localDateTime = toLocalDateTime(date).plusDays(day)
+                .withHour(0)
                 .withMinute(0)
                 .withSecond(0)
                 .withNano(0);
-        return localDateTime.atZone(systemDefault()).toInstant().toEpochMilli();
+        return DateUtil.getStringTime(localDateTime);
     }
 
-    public static long startOfDayEnd(Date date) {
-        LocalDateTime localDateTime = toLocalDateTime(date).plusDays(+1)
-                .withHour(5)
-                .withMinute(0)
-                .withSecond(0)
-                .withNano(0);
-        return localDateTime.atZone(systemDefault()).toInstant().toEpochMilli();
-    }
 
     /**
      * 结束时间
@@ -95,121 +96,23 @@ public class DateUtil {
      */
     public static long endOfDay(Date day) {
         LocalDateTime localDateTime = toLocalDateTime(day)
-                .withHour(5)
+                .withHour(0)
                 .withMinute(00)
                 .withSecond(00)
                 .withNano(000);
         return localDateTime.atZone(systemDefault()).toInstant().toEpochMilli();
     }
 
-    /**
-     * Long 转 date
-     * @param time
-     * @return
-     */
-    public static Date getDate(Long time) {
-        Date day = new Date();
-        if (time != null && time > 0) {
-            day = new Date(time);
-        }
-        return day;
-    }
+
+
 
     /**
-     * 5点开始时间
+     * @Author: liaoze
+     * @Description: 获取一天的结束时间
+     * @Date: 2020/9/14
      * @param
-     * @return
-     */
-    public static Date formatRequestTime(Date date ,int day) {
-        LocalDateTime localDateTime = toLocalDateTime(date).plusDays(day)
-                .withHour(5)
-                .withMinute(0)
-                .withSecond(0)
-                .withNano(0);
-        Instant time = localDateTime.atZone(systemDefault()).toInstant();
-        return Date.from(time);
-    }
-
-    /**
-     * 5点开始时间
-     * @param
-     * @return
-     */
-    public static Date startFiveClock(Date date ,int day) {
-        LocalDateTime localDateTime = toLocalDateTime(date).plusDays(day)
-                .withHour(5)
-                .withMinute(0)
-                .withSecond(0)
-                .withNano(0);
-        Instant time = localDateTime.atZone(systemDefault()).toInstant();
-        return Date.from(time);
-    }
-
-    /**
-     * 5点结束时间
-     * @return
-     */
-    public static Date endFiveClock(Date date , int day) {
-        LocalDateTime localDateTime = toLocalDateTime(date).plusDays(day)
-                .withHour(04)
-                .withMinute(59)
-                .withSecond(59)
-                .withNano(999);
-        Instant time = localDateTime.atZone(systemDefault()).toInstant();
-        return Date.from(time);
-    }
-
-    /**
-     * 获取统计开始时间
-     * @param
-     * @return
-     */
-    public static Date startFiveClockOfDay() {
-        Date date = new Date();
-        LocalDateTime localDateTime = toLocalDateTime(date).plusDays(-1)
-                .withHour(5)
-                .withMinute(0)
-                .withSecond(0)
-                .withNano(0);
-        Instant time = localDateTime.atZone(systemDefault()).toInstant();
-        return Date.from(time);
-    }
-
-    /**
-     * 获取统计结束时间
-     * @return
-     */
-    public static Date endFiveClockOfDay() {
-        Date date = new Date();
-        LocalDateTime localDateTime = toLocalDateTime(date)
-                .withHour(04)
-                .withMinute(59)
-                .withSecond(59)
-                .withNano(999);
-        Instant time = localDateTime.atZone(systemDefault()).toInstant();
-        return Date.from(time);
-    }
-
-    /**
-     * 获取一天的开始时间
-     *
-     * @return
-     */
-    public static long startOfToday() {
-        Calendar startTime = Calendar.getInstance();
-        startTime.set(Calendar.HOUR_OF_DAY, 5);
-        startTime.set(Calendar.MINUTE, 0);
-        startTime.set(Calendar.SECOND, 0);
-        startTime.set(Calendar.MILLISECOND, 0);
-        return startTime.getTimeInMillis();
-    }
-
-
-    /**
-     * 获取一天的结束时间
-     *
-     * @return
-     */
+     * @Return: long
+     **/
     public static long endOfToday() {
         Calendar startTime = Calendar.getInstance();
         startTime.setTime(new Date());
@@ -266,29 +169,28 @@ public class DateUtil {
 
 
     /**
-     * 判断给定的时间距离今天的时间天数
-     *
-     * @param time
-     * @return
-     */
+     * @Author: liaoze
+     * @Description: 判断给定的时间距离今天的时间天数
+     * @Return: int
+     **/
     public static int distanceToday(long time) {
-        if (time > startOfToday() && time < endOfToday()) {
+        if (time > startOfDay(new Date()) && time < endOfToday()) {
             return 0;
         }
-        if (time < startOfToday()) {
-            return (int) ((time - startOfToday()) / ONE_DAY_TIME) - 1;
+        if (time < startOfDay(new Date())) {
+            return (int) ((time - startOfDay(new Date())) / ONE_DAY_TIME) - 1;
         }
 
-        return (int) ((time - startOfToday()) / ONE_DAY_TIME);
+        return (int) ((time - startOfDay(new Date())) / ONE_DAY_TIME);
 
     }
 
 
     /**
-     * 获取两天的日期差
-     *
-     * @return
-     */
+     * @Author: liaoze
+     * @Description: 获取两天的日期差
+     * @Return: int
+     **/
     public static int getDayDateToDate(Long time,Long currentTime) {
         Long startDay = startOfDay(new Date(currentTime));
         Long endDay = endOfDay(new Date(currentTime));
@@ -302,10 +204,6 @@ public class DateUtil {
         return (int) ((time - startDay) / ONE_DAY_TIME);
 
     }
-
-
-
-
 
 
     /**

@@ -6,6 +6,10 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface CronMapper {
 
-    @Select("select cron from cron limit 1")
+    @Select("select cron from cron where id = '1'")
     String getCron();
+
+
+    @Select("select cron from cron where id = '2'")
+    String getTrainCron();
 }

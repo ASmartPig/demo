@@ -7,6 +7,16 @@ public class RecordInfo {
 
     private Long rid;
 
+    private Double inNox;
+
+    private Double inSo2;
+
+    private Double inFlux;
+
+    private Double inO2;
+
+    private Double inTemp;
+
     private Double predictValue;
 
     private Double trueValue;
@@ -71,5 +81,45 @@ public class RecordInfo {
 
     public void setBelong(Integer belong) {
         this.belong = belong;
+    }
+
+    public Double getInNox() {
+        return inNox;
+    }
+
+    public void setInNox(Double inNox) {
+        this.inNox = inNox;
+    }
+
+    public Double getInSo2() {
+        return inSo2;
+    }
+
+    public void setInSo2(Double inSo2) {
+        this.inSo2 = inSo2;
+    }
+
+    public Double getInFlux() {
+        return inFlux;
+    }
+
+    public void setInFlux(Double inFlux) {
+        this.inFlux = inFlux;
+    }
+
+    public Double getInO2() {
+        return inO2;
+    }
+
+    public void setInO2(Double inO2) {
+        this.inO2 = inO2;
+    }
+
+    public Double getInTemp() {
+        return inTemp;
+    }
+
+    public void setInTemp(Double inTemp) {
+        this.inTemp = inTemp;
     }
 }
