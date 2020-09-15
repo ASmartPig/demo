@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.RecordInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -132,11 +133,27 @@ public class BpNeuralNetworkHandle {
         }
     }
 
+    //更新输入归一化矩阵
+    public void updateInputNormalization(double[] inputData) {
+        for (int i = 0; i < inputData.length; i++) {
+            if (inputData[i] > xMaxArray[i]){
+                xMaxArray[i] = inputData[i];
+            }
 
+            if (inputData[i] < xMinArray[i]){
+                xMinArray[i] = inputData[i];
+            }
+        }
+    }
 
+    //更新输出归一化矩阵
+    public void updateOutputNormalization(double outputData) {
+        if (outputData > xMaxValue){
+            xMaxValue = outputData;
+        }
 
-
-
-
-
+        if (outputData < xMinValue){
+            xMinValue = outputData;
+        }
+    }
 }

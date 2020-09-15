@@ -44,7 +44,7 @@ public class TrainServiceImpl implements TrainService {
 
     //训练
     @Override
-    public void train() {
+    public double train() {
         log.info("TrainServiceImpl start ...");
         String start = DateUtil.startDay(new Date(),-1);
         String end = DateUtil.startDay(new Date());
@@ -73,7 +73,13 @@ public class TrainServiceImpl implements TrainService {
             bpNeuralNetworkHandle.updateWeight(inputWeight,inputValuesNm,hide_error);
             //5、更新隐含层->输出层权值
             bpNeuralNetworkHandle.updateWeight(inputWeight,inputValuesNm,hide_error);
+            //6、更新归一化矩阵
+            bpNeuralNetworkHandle.updateInputNormalization(inputData);
+            bpNeuralNetworkHandle.updateOutputNormalization(record.getPredictValue());
         }
+
+
+        return 0;
 
     }
 }

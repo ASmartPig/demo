@@ -45,7 +45,7 @@ public class CompleteScheduleConfig implements SchedulingConfigurer {
 //        inputService.predictedAndSave( map);
 
 
-           // inputService.predictedAndSave();
+            inputService.predictedAndSave();
             log.info("predicted end ..");
 
 
