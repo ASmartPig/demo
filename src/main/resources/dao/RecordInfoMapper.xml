@@ -18,7 +18,7 @@
     <result column="belong" jdbcType="INTEGER" property="belong" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, rid, predict_value, true_value, create_time, insert_time, belong
+    id, rid,CEMS_in_NOX,CEMS_in_so2,CEMS_in_flux,CEMS_in_o2,CEMS_in_temp,A_time,B_time, predict_value, true_value, create_time, insert_time, belong
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -153,6 +153,9 @@
           <![CDATA[
               and create_time <= #{endTime,jdbcType=VARCHAR}
               ]]>
+        </if>
+        <if test="1=1">
+            and belong = 1 and true_value > 0
         </if>
       </where>
     </select>

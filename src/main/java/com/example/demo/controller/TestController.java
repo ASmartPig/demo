@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.service.impl.InputService;
+import com.example.demo.service.impl.TrainService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,12 +17,27 @@ public class TestController {
     @Autowired
     private InputService inputService;
 
+    @Autowired
+    private TrainService trainService;
 
-    @PostMapping("/testMethod")
-    public void setCronMethod(){
-        log.info("setCronMethod start ...");
+
+
+
+    @PostMapping("/testPredict")
+    public void testPredict(){
+        log.info("testPredict start ...");
         inputService.predictedAndSave("2020-09-14 00:00:00","2020-09-14 23:59:59");
+    }
 
+    @PostMapping("/testTrain")
+    public void testTrain(){
+        log.info("testTrain start ...");
+        int count = 100 ;
+        double targetError = 0.0001;
+        while (count > 0 ){
+            trainService.train();
+            count --;
+        }
     }
 
 }
