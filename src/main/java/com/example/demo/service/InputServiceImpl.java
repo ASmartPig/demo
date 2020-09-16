@@ -147,6 +147,14 @@ public class InputServiceImpl implements InputService {
 
         double predict = bpNeuralNetworkHandle.getPredictedValue(inputValuesNm);
         double predictValue = bpNeuralNetworkHandle.reverseNormalization(predict);
+        //预测氮氧化物浓度范围设置限制，150~950
+        if (predictValue > 950){
+            predictValue = 950.0d;
+        }
+        if (predictValue<150){
+            predictValue = 150.0d;
+        }
+
         //真实需要排放的NOX标准
         double x = (1 + p) * standardValue - p * inp.getInNox();
 
@@ -191,6 +199,16 @@ public class InputServiceImpl implements InputService {
         String end = DateUtil.getStringTime(dateTime.plusSeconds(-290),DateUtil.DEFAULT_DATETIME_PATTERN);;
         RecordInfo updateRecord = recordInfoMapper.selectByTime(start,end);
         if (Objects.nonNull(updateRecord)){
+            if (inp.getInO2()>15){
+                //吹气
+                updateRecord.setBelong(2);
+            }else if (inp.getInNox() >1200){
+                //标气
+                updateRecord.setBelong(3);
+            }else{
+                //正常
+                updateRecord.setBelong(1);
+            }
             updateRecord.setTrueValue(inp.getInNox());
             recordInfoMapper.updateByPrimaryKeySelective(updateRecord);
         }
