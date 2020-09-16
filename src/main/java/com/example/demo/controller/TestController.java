@@ -32,12 +32,7 @@ public class TestController {
     @PostMapping("/testTrain")
     public void testTrain(){
         log.info("testTrain start ...");
-        int count = 100 ;
-        double targetError = 0.0001;
-        while (count > 0 ){
-            trainService.train();
-            count --;
-        }
+        trainService.train();
     }
 
 }

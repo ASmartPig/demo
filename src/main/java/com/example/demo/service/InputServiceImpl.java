@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.example.demo.controller.BpNeuralNetworkHandle;
 import com.example.demo.controller.OpcHandler;
 import com.example.demo.dao.RecordInfoMapper;
-import com.example.demo.dao.UserInfoMapper;
 import com.example.demo.dto.InputData;
 import com.example.demo.dto.RecordInfo;
 import com.example.demo.enums.CEMS;
