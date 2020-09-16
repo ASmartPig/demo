@@ -158,7 +158,7 @@ public class InputServiceImpl implements InputService {
         log.info("ratio :{},constant:{},standardValue:{}",ratio,constant,standardValue);
         log.info("inp id:{},predict:{},predictValue:{},NH3:{},actualNH3:{}",inp.getId(),predict,predictValue,NH3,actualNH3);
         //向opc server 写数据
-        opcHandler.wirte(actualNH3);
+        //opcHandler.wirte(actualNH3);
 
         //server table 1 id值
         recordInfo.setRid(inp.getId());

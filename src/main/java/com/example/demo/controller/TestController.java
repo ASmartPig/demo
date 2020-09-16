@@ -26,7 +26,7 @@ public class TestController {
     @PostMapping("/testPredict")
     public void testPredict(){
         log.info("testPredict start ...");
-        inputService.predictedAndSave("2020-09-14 00:00:00","2020-09-14 23:59:59");
+        inputService.predictedAndSave("2020-09-14 11:56:30","2020-09-14 23:59:59");
     }
 
     @PostMapping("/testTrain")
