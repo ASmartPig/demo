@@ -10,31 +10,6 @@ import javax.annotation.Resource;
 @Service
 public class BpNeuralNetworkHandle {
 
-    @Autowired
-    @Qualifier("inputWeight")
-    private double[][] inputWeight;
-
-    @Resource(name = "outputWeight")
-    private double[] outputWeight;
-
-    @Resource(name = "bOneArray")
-    private double[] bOneArray;
-
-    @Resource(name = "b2Value")
-    private double b2Value;
-
-    @Resource(name = "xMinArray")
-    private double[] xMinArray;
-
-    @Resource(name = "xMaxArray")
-    private double[] xMaxArray;
-
-    @Resource(name = "xMinValue")
-    private double xMinValue;
-
-    @Resource(name = "xMaxValue")
-    private double xMaxValue;
-
     private static  double yMaxValue = 1;
 
     private static  double yMinValue = -1;
@@ -42,7 +17,7 @@ public class BpNeuralNetworkHandle {
     //学习速率
     private static  double LEARN_FACTORS = 0.01;
 
-    public double[] normalization(double[] inputValues){
+    public double[] normalization(double[] inputValues,double[] xMaxArray,double[] xMinArray){
         double[] inputValuesNm = new double[inputValues.length];
         for (int i = 0; i < inputValuesNm.length; i++) {
             double xMid = xMaxArray[i] - xMinArray[i];
@@ -54,28 +29,28 @@ public class BpNeuralNetworkHandle {
 
     //long x1,long x2,double x3,double x4,double x5,double x6,double x7
     //计算预测值
-    public double getPredictedValue(double[] inputValues){
+    public double getPredictedValue(double[] inputValues,double[][] inputWeight,double[] outputWeight,double[] bOneArray,double b2Value){
         //隐含层输入值
-        double[] hiddenInput = getHiddenInput(inputValues);
+        double[] hiddenInput = getHiddenInput(inputValues,inputWeight,bOneArray);
         //计算输出值
-        double predictedValue = getTarget(hiddenInput,outputWeight);
+        double predictedValue = getTarget(hiddenInput,outputWeight,b2Value);
         return predictedValue;
     }
 
 
     //获取隐含层输入值
-    public double[] getHiddenInput(double[] inputValues){
+    public double[] getHiddenInput(double[] inputValues,double[][] inputWeight,double[] bOneArray){
         double[] hiddenInput = new double[12];
         //获取i隐含层的输入值
         for (int i=0;i<12;i++){
-            hiddenInput[i] = getOutValue(i,inputValues,inputWeight);
+            hiddenInput[i] = getOutValue(i,inputValues,inputWeight,bOneArray);
         }
         return hiddenInput;
 
     }
 
     //获取i隐含层的输入值
-    public double getOutValue(int i,double[] inputValues,double[][] inputWeight){
+    public double getOutValue(int i,double[] inputValues,double[][] inputWeight,double[] bOneArray){
         double count = 0;
         for (int j = 0; j < inputValues.length; j++) {
                 count += inputValues[j] * inputWeight[j][i];
@@ -85,7 +60,7 @@ public class BpNeuralNetworkHandle {
         return Math.tanh(count);
     }
 
-    public double getTarget(double[] hiddenInput,double[] outputWeight){
+    public double getTarget(double[] hiddenInput,double[] outputWeight,double b2Value){
         double count = 0;
         for (int i = 0; i < hiddenInput.length; i++) {
             count += hiddenInput[i] * outputWeight[i];
@@ -96,7 +71,7 @@ public class BpNeuralNetworkHandle {
     }
 
     //反归一化
-    public double reverseNormalization(double predict){
+    public double reverseNormalization(double predict,double xMinValue,double xMaxValue){
         double xMid = xMaxValue - xMinValue;
         double yMid = yMaxValue - yMinValue;
         double trueValue = ((predict - yMinValue)/yMid) * xMid + xMinValue;
@@ -131,29 +106,56 @@ public class BpNeuralNetworkHandle {
         for (int i = 0; i < hiddenInput.length; i++) {
             newOutputWeight[i] = (hiddenInput[i] * outPutError * LEARN_FACTORS) + newOutputWeight[i];
         }
-    }
 
-    //更新输入归一化矩阵
-    public void updateInputNormalization(double[] inputData) {
-        for (int i = 0; i < inputData.length; i++) {
-            if (inputData[i] > xMaxArray[i]){
-                xMaxArray[i] = inputData[i];
-            }
+}
 
-            if (inputData[i] < xMinArray[i]){
-                xMinArray[i] = inputData[i];
+    //初始化输入层->隐含层权值
+    public double[][] initInputWeight() {
+        double inputWeight[][] = new double[7][12];
+        for (int i = 0; i < inputWeight.length; i++) {
+            for (int j = 0; j < inputWeight[i].length; j++) {
+                inputWeight[i][j] = 0.5 - Math.random();
             }
         }
+        return  inputWeight;
     }
 
-    //更新输出归一化矩阵
-    public void updateOutputNormalization(double outputData) {
-        if (outputData > xMaxValue){
-            xMaxValue = outputData;
+    //初始化隐含层->输出层权值
+    public double[] initOutputWeight() {
+        double outputWeight[] = new double[12];
+        for (int i = 0; i < outputWeight.length; i++) {
+            outputWeight[i] = 0.5 - Math.random();
         }
+        return  outputWeight;
+    }
 
-        if (outputData < xMinValue){
-            xMinValue = outputData;
+    //初始化隐含层阈值
+    public double[] initBOneArray() {
+        double bOneArray[] = new double[12];
+        for (int i = 0; i < bOneArray.length; i++) {
+            bOneArray[i] = 0.5 - Math.random();
         }
+        return  bOneArray;
+    }
+
+
+    //初始化隐含层阈值
+    public double initB2Value() {
+        double  b2Value = 0.5 - Math.random();
+        return  b2Value;
+    }
+
+    //输出归一化
+    public double normalizationOutput(Double value, double xMaxValue, double xMinValue) {
+        double xMid = xMaxValue - xMinValue;
+        double yMid = yMaxValue - yMinValue;
+        return  ((value - xMinValue)/xMid)* yMid + yMinValue;
+    }
+
+    public void updateThreshold(double[] newBOneArray, double newB2Value, double[] hideError, double outPutError) {
+        for (int i = 0; i < hideError.length; i++) {
+            newBOneArray[i] = hideError[i] * LEARN_FACTORS;
+        }
+        newB2Value = outPutError * LEARN_FACTORS;
     }
 }

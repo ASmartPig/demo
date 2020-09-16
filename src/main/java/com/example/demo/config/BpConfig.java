@@ -141,7 +141,7 @@ public class BpConfig {
     }
 
     @Bean(name = "xMinValue")
-    public double getYMinValue() throws IOException {
+    public double getOutPutXMinValue() throws IOException {
         double xMinValue = 0;
         FileReader fileReader = new FileReader(path);
         BufferedReader bufferedReader = new BufferedReader(fileReader);
@@ -162,7 +162,7 @@ public class BpConfig {
     }
 
     @Bean(name = "xMaxValue")
-    public double getYMaxValue() throws IOException {
+    public double getOutPutXMaxValue() throws IOException {
         double xMaxValue = 0;
         FileReader fileReader = new FileReader(path);
         BufferedReader bufferedReader = new BufferedReader(fileReader);

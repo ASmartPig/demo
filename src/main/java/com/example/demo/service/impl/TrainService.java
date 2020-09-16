@@ -8,5 +8,5 @@ package com.example.demo.service.impl;
  */
 public interface TrainService {
 
-     double train();
+     double train(int iterNumber,double error);
 }

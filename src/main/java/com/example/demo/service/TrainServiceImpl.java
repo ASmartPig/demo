@@ -12,6 +12,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -41,12 +45,16 @@ public class TrainServiceImpl implements TrainService {
     @Resource(name = "outputWeight")
     private double[] outputWeight;
 
+    //private  String path = "/Users/liaoze/Documents/1.txt";
 
+    private  String path = "C:/Users/Lenovo/Desktop/1.txt";
 
     //训练
     @Override
-    public double train() {
+    public double train(int iterNumber,double error) {
         log.info("TrainServiceImpl start ...");
+        double trainError = 1;
+        double deviation = 0d;
         String start = DateUtil.startDay(new Date(),-1);
         String end = DateUtil.startDay(new Date());
         log.info("TrainServiceImpl start:{},end:{}",start,end);
@@ -54,45 +62,64 @@ public class TrainServiceImpl implements TrainService {
         //1、读取数据库，并且筛选掉脏数据
         List<RecordInfo> recordInfos =  recordInfoMapper.selectTrainData(start,end);
 
-
-
         //2、更新归一化矩阵
         double[] newXMaxArray = this.getNewInputMaxNormalization(recordInfos);
         double[] newXMinArray = this.getNewInputMinNormalization(recordInfos);
+        double xMaxValue = this.getNewOutputMaxNormalization(recordInfos);
+        double xMinValue = this.getNewOutputMinNormalization(recordInfos);
 
-        int count = 100;
+        //3、初始化神经网络
+        double[][] newInputWeight = bpNeuralNetworkHandle.initInputWeight();
+        double[] newOutputWeight = bpNeuralNetworkHandle.initOutputWeight();
+        double[] newBOneArray = bpNeuralNetworkHandle.initBOneArray();
+        double newB2Value = bpNeuralNetworkHandle.initB2Value();
 
 
-        while (1000)
-
-
-        for (RecordInfo record : recordInfos){
-
+        while (iterNumber > 0 || trainError < error) {
+            log.info("train iterator iterNumber:{}", iterNumber);
             double[] inputData = new double[7];
-            inputData[0] = record.getATime();
-            inputData[1] = record.getBTime();
-            inputData[2] = record.getInNox();
-            inputData[3] = record.getInSo2();
-            inputData[4] = record.getInFlux();
-            inputData[5] = record.getInO2();
-            inputData[6] = record.getInTemp();
+            for (RecordInfo record : recordInfos) {
+                inputData[0] = record.getATime();
+                inputData[1] = record.getBTime();
+                inputData[2] = record.getInNox();
+                inputData[3] = record.getInSo2();
+                inputData[4] = record.getInFlux();
+                inputData[5] = record.getInO2();
+                inputData[6] = record.getInTemp();
 
-            double[] inputValuesNm = bpNeuralNetworkHandle.normalization(inputData);
-            // 1、获取输出层的误差；
-            double outPutError = bpNeuralNetworkHandle.getOutError(record.getPredictValue(), record.getTrueValue());
-            //2、获取隐藏层的输入值
-            double[] hiddenInput = bpNeuralNetworkHandle.getHiddenInput(inputValuesNm);
-            //3、获取隐含层的误差；
-            double[] hide_error = bpNeuralNetworkHandle.getHideError(outPutError, outputWeight, hiddenInput);
-            //4、更新输入层->隐含层权值
-            bpNeuralNetworkHandle.updateWeight(inputWeight,inputValuesNm,hide_error);
-            //5、更新隐含层->输出层权值
-            bpNeuralNetworkHandle.updateWeight(outputWeight,hiddenInput,outPutError);
+                //4、输入数据归一化
+                double[] inputValuesNm = bpNeuralNetworkHandle.normalization(inputData,newXMaxArray,newXMinArray);
+                //5、输出数据归一化
+                double predictValue = bpNeuralNetworkHandle.getPredictedValue(inputValuesNm,newInputWeight,newOutputWeight,newBOneArray,newB2Value);
+                double trueValue = bpNeuralNetworkHandle.normalizationOutput(record.getTrueValue(),xMaxValue,xMinValue);
 
+                //6、获取输出层的误差；
+                double outPutError = bpNeuralNetworkHandle.getOutError(predictValue, trueValue);
+                //7、获取隐藏层的输入值
+                double[] hiddenInput = bpNeuralNetworkHandle.getHiddenInput(inputValuesNm,newInputWeight,newBOneArray);
+                //8、获取隐含层的残差；
+                double[] hideError = bpNeuralNetworkHandle.getHideError(outPutError, newOutputWeight, hiddenInput);
+                //9、更新输入层->隐含层权值
+                bpNeuralNetworkHandle.updateWeight(newInputWeight, inputValuesNm, hideError);
+                //10、更新隐含层->输出层权值
+                bpNeuralNetworkHandle.updateWeight(newOutputWeight, hiddenInput, outPutError);
+                //11、更新阈值
+                bpNeuralNetworkHandle.updateThreshold(newBOneArray,newB2Value,hideError,outPutError);
+
+                //12、计算 count(样本值-预测值)的平方
+                deviation = deviation + Math.pow(Math.abs(trueValue-predictValue),2);
+
+            }
+            trainError = deviation/recordInfos.size();
+            iterNumber--;
         }
 
+        this.wirte(newInputWeight,newOutputWeight,newBOneArray,newB2Value,newXMaxArray,newXMinArray,xMaxValue, xMinValue);
 
-        return 0;
+
+
+
+        return trainError;
 
     }
 
@@ -119,6 +146,7 @@ public class TrainServiceImpl implements TrainService {
     }
 
 
+
     //归一化矩阵输入值最小值
     public double[] getNewInputMinNormalization(List<RecordInfo> recordInfos){
         RecordInfo aTimeMin = recordInfos.stream().filter(item -> item.getATime() != null).min(Comparator.comparingLong(RecordInfo::getATime)).get();
@@ -140,4 +168,68 @@ public class TrainServiceImpl implements TrainService {
 
         return newXMinArray;
     }
+
+    //归一化矩阵输出值最大值
+    public double getNewOutputMaxNormalization(List<RecordInfo> recordInfos){
+        RecordInfo recordInfo = recordInfos.stream().filter(item -> item.getTrueValue() != null).max(Comparator.comparingDouble(RecordInfo::getTrueValue)).get();
+        return recordInfo.getTrueValue();
+
+    }
+
+
+    //归一化矩阵输出值最小值
+    public double getNewOutputMinNormalization(List<RecordInfo> recordInfos){
+        RecordInfo recordInfo = recordInfos.stream().filter(item -> item.getTrueValue() != null).min(Comparator.comparingDouble(RecordInfo::getTrueValue)).get();
+        return recordInfo.getTrueValue();
+    }
+
+    //将bp神经网络输出
+    private void wirte(double[][] newInputWeight, double[] newOutputWeight, double[] newBOneArray, double newB2Value,double[] newXMaxArray,double[] newXMinArray,double xMaxValue,double xMinValue) {
+        FileWriter fw= null;
+        try {
+            fw = new FileWriter(new File(path));
+            //写入中文字符时会出现乱码
+            BufferedWriter bw=new BufferedWriter(fw);
+            //BufferedWriter  bw=new BufferedWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File("E:/phsftp/evdokey/evdokey_201103221556.txt")), "UTF-8")));
+            for (int i = 0; i < newInputWeight.length; i++) {
+                for (int j = 0; j < newInputWeight[i].length; j++) {
+                    bw.write(newInputWeight[i][j]+"\t\n");
+                }
+
+            }
+            for (int i = 0; i < newBOneArray.length; i++) {
+                bw.write(newBOneArray[i]+"\t\n");
+            }
+
+            for (int i = 0; i < newOutputWeight.length; i++) {
+                bw.write(newOutputWeight[i]+"\t\n");
+            }
+
+            bw.write(newB2Value+"\t\n");
+
+            for (int i = 0; i < newXMinArray.length; i++) {
+                bw.write(newXMinArray[i]+"\t\n");
+            }
+
+            for (int i = 0; i < newXMaxArray.length; i++) {
+                bw.write(newXMaxArray[i]+"\t\n");
+            }
+
+            bw.write(xMinValue+"\t\n");
+            bw.write(xMaxValue+"\t\n");
+
+
+            bw.close();
+            fw.close();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
+
 }

@@ -20,6 +20,14 @@ public class TestController {
     @Autowired
     private TrainService trainService;
 
+    //迭代次数
+    private static int iterNumber = 100;
+
+    //误差
+    private static  double error = 0.0001;
+
+
+
 
 
 
@@ -32,7 +40,8 @@ public class TestController {
     @PostMapping("/testTrain")
     public void testTrain(){
         log.info("testTrain start ...");
-        trainService.train();
+        double trainError = trainService.train(iterNumber, error);
+        log.info("testTrain end ...trainError:{}",trainError);
     }
 
 }

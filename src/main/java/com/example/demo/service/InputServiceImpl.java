@@ -12,8 +12,10 @@ import com.example.demo.service.impl.InputService;
 import com.example.demo.util.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -33,6 +35,32 @@ public class InputServiceImpl implements InputService {
 
     @Autowired
     private OpcHandler opcHandler;
+
+    @Autowired
+    @Qualifier("inputWeight")
+    private double[][] inputWeight;
+
+    @Resource(name = "outputWeight")
+    private double[] outputWeight;
+
+    @Resource(name = "bOneArray")
+    private double[] bOneArray;
+
+    @Resource(name = "b2Value")
+    private double b2Value;
+
+    @Resource(name = "xMinArray")
+    private double[] xMinArray;
+
+    @Resource(name = "xMaxArray")
+    private double[] xMaxArray;
+
+    @Resource(name = "xMinValue")
+    private double xMinValue;
+
+    @Resource(name = "xMaxValue")
+    private double xMaxValue;
+
 
     //真实所需氨水因子
     private static double ratio = 1.5;
@@ -143,10 +171,10 @@ public class InputServiceImpl implements InputService {
         recordInfo.setATime(durationA.getSeconds());
         recordInfo.setBTime(durationB.getSeconds());
 
-        double[] inputValuesNm = bpNeuralNetworkHandle.normalization(inputData);
+        double[] inputValuesNm = bpNeuralNetworkHandle.normalization(inputData,xMaxArray,xMinArray);
 
-        double predict = bpNeuralNetworkHandle.getPredictedValue(inputValuesNm);
-        double predictValue = bpNeuralNetworkHandle.reverseNormalization(predict);
+        double predict = bpNeuralNetworkHandle.getPredictedValue(inputValuesNm,inputWeight,outputWeight,bOneArray,b2Value);
+        double predictValue = bpNeuralNetworkHandle.reverseNormalization(predict,xMaxValue,xMinValue);
         //预测氮氧化物浓度范围设置限制，150~950
         if (predictValue > 950){
             predictValue = 950.0d;
