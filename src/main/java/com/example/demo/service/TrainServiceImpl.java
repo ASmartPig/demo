@@ -52,7 +52,7 @@ public class TrainServiceImpl implements TrainService {
 
         List<RecordInfo> recordInfos =  recordInfoMapper.selectTrainData(start,end);
         for (RecordInfo record : recordInfos){
-            // 1、获取输出层的误差；
+
             double[] inputData = new double[7];
             inputData[0] = record.getATime();
             inputData[1] = record.getBTime();
@@ -63,16 +63,16 @@ public class TrainServiceImpl implements TrainService {
             inputData[6] = record.getInTemp();
 
             double[] inputValuesNm = bpNeuralNetworkHandle.normalization(inputData);
-
+            // 1、获取输出层的误差；
             double outPutError = bpNeuralNetworkHandle.getOutError(record.getPredictValue(), record.getTrueValue());
-            //2、获取隐藏值的输入值
+            //2、获取隐藏层的输入值
             double[] hiddenInput = bpNeuralNetworkHandle.getHiddenInput(inputValuesNm);
             //3、获取隐含层的误差；
             double[] hide_error = bpNeuralNetworkHandle.getHideError(outPutError, outputWeight, hiddenInput);
             //4、更新输入层->隐含层权值
             bpNeuralNetworkHandle.updateWeight(inputWeight,inputValuesNm,hide_error);
             //5、更新隐含层->输出层权值
-            bpNeuralNetworkHandle.updateWeight(inputWeight,inputValuesNm,hide_error);
+            bpNeuralNetworkHandle.updateWeight(outputWeight,hiddenInput,outPutError);
             //6、更新归一化矩阵
             bpNeuralNetworkHandle.updateInputNormalization(inputData);
             bpNeuralNetworkHandle.updateOutputNormalization(record.getPredictValue());
