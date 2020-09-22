@@ -247,7 +247,6 @@
               ]]>
       </if>
     </where>
-    order by create_time
   </select>
 
   <select id="selectInputById" resultType="com.example.demo.dto.InputData">

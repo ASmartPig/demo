@@ -1,17 +1,15 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import com.example.demo.controller.BpNeuralNetworkHandle;
 import com.example.demo.dao.RecordInfoMapper;
 import com.example.demo.dto.RecordInfo;
 import com.example.demo.mapper.ServerTableOneMapper;
-import com.example.demo.service.impl.TrainService;
-import com.example.demo.util.DateUtil;
+import com.example.demo.service.TrainService;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -38,29 +36,49 @@ public class TrainServiceImpl implements TrainService {
     @Autowired
     private BpNeuralNetworkHandle bpNeuralNetworkHandle;
 
-    @Autowired
-    @Qualifier("inputWeight")
-    private double[][] inputWeight;
+    //private  String path = "/Users/liaoze/Documents/train.txt";
 
-    @Resource(name = "outputWeight")
-    private double[] outputWeight;
-
-    //private  String path = "/Users/liaoze/Documents/1.txt";
-
-    private  String path = "C:/Users/Lenovo/Desktop/1.txt";
+    private  String path = "C:/Users/Lenovo/Desktop/train.txt";
 
     //训练
     @Override
     public double train(int iterNumber,double error) {
         log.info("TrainServiceImpl start ...");
         double trainError = 1;
-        double deviation = 0d;
-        String start = DateUtil.startDay(new Date(),-1);
-        String end = DateUtil.startDay(new Date());
+        double absError = 0;
+
+//        String start = DateUtil.startDay(new Date(),-1);
+//        String end = DateUtil.startDay(new Date());
+        String start = "2020-09-15 00:00:00";
+        String end = "2020-09-16 23:59:59";
         log.info("TrainServiceImpl start:{},end:{}",start,end);
 
+        int number = 20;
         //1、读取数据库，并且筛选掉脏数据
-        List<RecordInfo> recordInfos =  recordInfoMapper.selectTrainData(start,end);
+        List<RecordInfo> filterRecordInfos=  recordInfoMapper.selectTrainData(start,end);
+
+        List<RecordInfo> recordInfos  = Lists.newArrayList();
+
+        for (int i = 0; i < filterRecordInfos.size(); i++) {
+            RecordInfo re = filterRecordInfos.get(i);
+            if (re.getBelong() == 2 || re.getBelong() == 3){
+                continue;
+            }
+            boolean isBelong = true;
+            int min = i-number < 0 ? 0:i-number;
+            int max = i+number > recordInfos.size() ? recordInfos.size()-1:i+number;
+            for (int j = min; j < max; j++) {
+                if (recordInfos.get(j).getBelong() == 2 || recordInfos.get(j).getBelong() == 3){
+                    isBelong = false;
+                }
+            }
+            if (isBelong){
+                recordInfos.add(re);
+            }
+
+
+        }
+
 
         //2、更新归一化矩阵
         double[] newXMaxArray = this.getNewInputMaxNormalization(recordInfos);
@@ -74,9 +92,10 @@ public class TrainServiceImpl implements TrainService {
         double[] newBOneArray = bpNeuralNetworkHandle.initBOneArray();
         double newB2Value = bpNeuralNetworkHandle.initB2Value();
 
-
+        //训练
         while (iterNumber > 0 || trainError < error) {
-            log.info("train iterator iterNumber:{}", iterNumber);
+            double deviation = 0d;
+            double midAbsError = 0;
             double[] inputData = new double[7];
             for (RecordInfo record : recordInfos) {
                 inputData[0] = record.getATime();
@@ -89,7 +108,7 @@ public class TrainServiceImpl implements TrainService {
 
                 //4、输入数据归一化
                 double[] inputValuesNm = bpNeuralNetworkHandle.normalization(inputData,newXMaxArray,newXMinArray);
-                //5、输出数据归一化
+                //5、计算现有网络的输出
                 double predictValue = bpNeuralNetworkHandle.getPredictedValue(inputValuesNm,newInputWeight,newOutputWeight,newBOneArray,newB2Value);
                 double trueValue = bpNeuralNetworkHandle.normalizationOutput(record.getTrueValue(),xMaxValue,xMinValue);
 
@@ -106,15 +125,48 @@ public class TrainServiceImpl implements TrainService {
                 //11、更新阈值
                 bpNeuralNetworkHandle.updateThreshold(newBOneArray,newB2Value,hideError,outPutError);
 
+
                 //12、计算 count(样本值-预测值)的平方
+
+                double nmTrueValue = bpNeuralNetworkHandle.reverseNormalization(trueValue,xMaxValue,xMinValue);
+                double nmPredictValue = bpNeuralNetworkHandle.reverseNormalization(predictValue,xMaxValue,xMinValue);
                 deviation = deviation + Math.pow(Math.abs(trueValue-predictValue),2);
+                midAbsError = midAbsError + Math.abs(nmTrueValue-nmPredictValue)/nmPredictValue;
+
 
             }
             trainError = deviation/recordInfos.size();
+            absError = midAbsError/recordInfos.size();
+            log.info("train iterator iterNumber:{}，均方差:{},absError:{}", iterNumber,trainError,absError);
             iterNumber--;
         }
 
+        //写文件
         this.wirte(newInputWeight,newOutputWeight,newBOneArray,newB2Value,newXMaxArray,newXMinArray,xMaxValue, xMinValue);
+
+        //应用
+        double test = 0;
+        for (RecordInfo record : recordInfos){
+            double[] inputData = new double[7];
+            inputData[0] = record.getATime();
+            inputData[1] = record.getBTime();
+            inputData[2] = record.getInNox();
+            inputData[3] = record.getInSo2();
+            inputData[4] = record.getInFlux();
+            inputData[5] = record.getInO2();
+            inputData[6] = record.getInTemp();
+
+            //4、输入数据归一化
+            double[] inputValuesNm = bpNeuralNetworkHandle.normalization(inputData,newXMaxArray,newXMinArray);
+            double predictedValue = bpNeuralNetworkHandle.getPredictedValue(inputValuesNm,newInputWeight,newOutputWeight,newBOneArray,newB2Value);
+            double trainPreDict = bpNeuralNetworkHandle.reverseNormalization(predictedValue,xMaxValue,xMinValue);
+            //recordInfo.setTrainPredict(trainPreDict);
+            test = test + Math.abs(record.getTrueValue()-trainPreDict)/trainPreDict;
+           // recordInfoMapper.updateByPrimaryKeySelective(recordInfo);
+        }
+       double  absError2 = test/recordInfos.size();
+        log.info("absError2 :{}",absError2);
+
 
 
 
@@ -216,7 +268,7 @@ public class TrainServiceImpl implements TrainService {
             }
 
             bw.write(xMinValue+"\t\n");
-            bw.write(xMaxValue+"\t\n");
+            bw.write(xMaxValue+"");
 
 
             bw.close();

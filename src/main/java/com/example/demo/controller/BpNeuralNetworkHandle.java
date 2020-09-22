@@ -17,6 +17,7 @@ public class BpNeuralNetworkHandle {
     //学习速率
     private static  double LEARN_FACTORS = 0.01;
 
+
     public double[] normalization(double[] inputValues,double[] xMaxArray,double[] xMinArray){
         double[] inputValuesNm = new double[inputValues.length];
         for (int i = 0; i < inputValuesNm.length; i++) {
@@ -71,7 +72,7 @@ public class BpNeuralNetworkHandle {
     }
 
     //反归一化
-    public double reverseNormalization(double predict,double xMinValue,double xMaxValue){
+    public double reverseNormalization(double predict,double xMaxValue,double xMinValue){
         double xMid = xMaxValue - xMinValue;
         double yMid = yMaxValue - yMinValue;
         double trueValue = ((predict - yMinValue)/yMid) * xMid + xMinValue;
@@ -87,7 +88,7 @@ public class BpNeuralNetworkHandle {
     public double[] getHideError(double outPutError,double[] outputWeight,double[] hiddenInput){
         double[] hideError = new double[12];
         for (int i = 0; i < outputWeight.length; i++) {
-            hideError[i] = outPutError * outputWeight[i] * Math.pow(1 - hiddenInput[i],2);;
+            hideError[i] = outPutError * outputWeight[i] * (1-Math.pow(hiddenInput[i],2));;
         }
         return hideError;
     }

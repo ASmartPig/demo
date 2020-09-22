@@ -12,10 +12,12 @@
     <result column="A_time" jdbcType="BIGINT" property="ATime" />
     <result column="B_time" jdbcType="BIGINT" property="BTime" />
     <result column="predict_value" jdbcType="DOUBLE" property="predictValue" />
+    <result column="train_predict" jdbcType="DOUBLE" property="trainPredict" />
     <result column="true_value" jdbcType="DOUBLE" property="trueValue" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="insert_time" jdbcType="TIMESTAMP" property="insertTime" />
     <result column="belong" jdbcType="INTEGER" property="belong" />
+    <result column="is_dirty_neighbor" jdbcType="INTEGER" property="isDirtyNeighbor" />
   </resultMap>
   <sql id="Base_Column_List">
     id, rid,CEMS_in_NOX as inNox,CEMS_in_so2 as inSo2,CEMS_in_flux as inFlux,CEMS_in_o2 as inO2,CEMS_in_temp as inTemp,A_time as ATime,B_time as BTime, predict_value as predictValue, true_value as trueValue, create_time as createTime, insert_time as insertTime, belong
@@ -33,10 +35,10 @@
   <insert id="insert" parameterType="com.example.demo.dto.RecordInfo">
     insert into record_info (id, rid,CEMS_in_NOX,CEMS_in_so2,CEMS_in_flux,CEMS_in_o2,CEMS_in_temp,A_time,B_time,predict_value,
       true_value, create_time, insert_time, 
-      belong)
+      belong,is_dirty_neighbor)
     values (#{id,jdbcType=INTEGER}, #{rid,jdbcType=BIGINT}, #{inNox,jdbcType=DOUBLE}, #{inSo2,jdbcType=DOUBLE},
      #{inFlux,jdbcType=DOUBLE}, #{inO2,jdbcType=DOUBLE}, #{inTemp,jdbcType=DOUBLE},#{ATime,jdbcType=BIGINT},#{BTime,jdbcType=BIGINT}, #{predictValue,jdbcType=DOUBLE},  #{trueValue,jdbcType=DOUBLE}, #{createTime,jdbcType=TIMESTAMP}, #{insertTime,jdbcType=TIMESTAMP},
-      #{belong,jdbcType=INTEGER})
+      #{belong,jdbcType=INTEGER},#{isDirtyNeighbor,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.example.demo.dto.RecordInfo">
     insert into record_info
@@ -87,7 +89,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.dto.RecordInfo">
+    <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.dto.RecordInfo">
     update record_info
     <set>
       <if test="rid != null">
@@ -95,6 +97,9 @@
       </if>
       <if test="predictValue != null">
         predict_value = #{predictValue,jdbcType=DOUBLE},
+      </if>
+      <if test="trainPredict != null">
+        train_predict = #{trainPredict,jdbcType=DOUBLE},
       </if>
       <if test="trueValue != null">
         true_value = #{trueValue,jdbcType=DOUBLE},
@@ -108,8 +113,11 @@
       <if test="belong != null">
         belong = #{belong,jdbcType=INTEGER},
       </if>
+      <if test="absError != null">
+        abs_error = #{absError,jdbcType=DOUBLE},
+      </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
+    where rid = #{rid,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.example.demo.dto.RecordInfo">
     update record_info
@@ -120,6 +128,13 @@
       insert_time = #{insertTime,jdbcType=TIMESTAMP},
       belong = #{belong,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateDirty">
+    update record_info set is_dirty_neighbor = 1 where  <![CDATA[
+               id >= #{min}
+              ]]> and <![CDATA[
+               id <= #{max}
+              ]]>
   </update>
 
   <select id="selectByTime" resultType="com.example.demo.dto.RecordInfo">
@@ -144,19 +159,12 @@
       select <include refid="Base_Column_List"></include>
       from record_info
       <where>
-        <if test="startTime != null and startTime !=''">
-          <![CDATA[
-              and create_time >= #{startTime,jdbcType=VARCHAR}
-              ]]>
-        </if>
-        <if test="endTime != null and endTime !=''">
-          <![CDATA[
-              and create_time <= #{endTime,jdbcType=VARCHAR}
-              ]]>
-        </if>
         <if test="1==1">
-            and belong = 1 and true_value > 0
+             and true_value > 0 and  predict_value > 0 order by create_time
         </if>
       </where>
     </select>
+  <select id="selectByRid" resultType="com.example.demo.dto.RecordInfo">
+    select  <include refid="Base_Column_List"></include> from record_info where rid =#{rid}
+  </select>
 </mapper>

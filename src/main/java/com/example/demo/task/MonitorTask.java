@@ -2,22 +2,16 @@ package com.example.demo.task;
 
 import com.example.demo.controller.OpcHandler;
 import com.example.demo.dao.CronMapper;
-import com.example.demo.service.impl.InputService;
-import com.example.demo.service.impl.TrainService;
-import com.example.demo.util.DateUtil;
+import com.example.demo.service.PredictService;
+import com.example.demo.service.TrainService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
-import java.util.Date;
-import java.util.Map;
 
 
 @Slf4j
@@ -29,7 +23,7 @@ public class MonitorTask implements SchedulingConfigurer {
     private CronMapper cronMapper;
 
     @Autowired
-    private InputService inputService;
+    private PredictService inputService;
 
     @Autowired
     private OpcHandler opcHandler;

@@ -10,7 +10,7 @@ public class BpConfig {
 
     //private static String path = "/Users/liaoze/Documents/1.txt";
 
-    private static String path = "C:/Users/Lenovo/Desktop/1.txt";
+    private static String path = "C:/Users/Lenovo/Desktop/train.txt";
 
 
     @Bean(name = "inputWeight")

@@ -2,20 +2,15 @@ package com.example.demo.task;
 
 import com.example.demo.controller.OpcHandler;
 import com.example.demo.dao.CronMapper;
-import com.example.demo.service.impl.InputService;
+import com.example.demo.service.PredictService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
-import java.time.LocalDateTime;
 
 @Slf4j
 @Component
@@ -26,7 +21,7 @@ public class CompleteScheduleConfig implements SchedulingConfigurer {
     private CronMapper cronMapper;
 
     @Autowired
-    private InputService inputService;
+    private PredictService inputService;
 
     @Autowired
     private OpcHandler opcHandler;
@@ -45,7 +40,7 @@ public class CompleteScheduleConfig implements SchedulingConfigurer {
 //        inputService.predictedAndSave( map);
 
 
-            inputService.predictedAndSave();
+           // inputService.predicteddAndSave();
             log.info("predicted end ..");
 
 

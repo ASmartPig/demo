@@ -22,8 +22,9 @@ public interface RecordInfoMapper {
 
     RecordInfo selectByTime(@Param("startTime") String start, @Param("endTime") String end);
 
-    @Select("select * from record_info where rid =#{rid}")
-    RecordInfo selectByRid(long rid);
+    RecordInfo selectByRid(@Param("rid")long rid);
 
     List<RecordInfo> selectTrainData(@Param("startTime") String startTime, @Param("endTime")String endTime);
+
+    void updateDirty(@Param("min")int min, @Param("max")int max);
 }

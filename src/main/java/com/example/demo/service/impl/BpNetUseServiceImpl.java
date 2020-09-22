@@ -1,28 +1,27 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.example.demo.controller.BpNeuralNetworkHandle;
-import com.example.demo.controller.OpcHandler;
 import com.example.demo.dao.RecordInfoMapper;
 import com.example.demo.dto.InputData;
 import com.example.demo.dto.RecordInfo;
-import com.example.demo.enums.CEMS;
 import com.example.demo.mapper.ServerTableOneMapper;
-import com.example.demo.service.impl.InputService;
+import com.example.demo.service.BpNetUseService;
 import com.example.demo.util.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
-public class InputServiceImpl implements InputService {
+public class BpNetUseServiceImpl implements BpNetUseService {
 
     @Autowired
     private BpNeuralNetworkHandle bpNeuralNetworkHandle;
@@ -33,11 +32,7 @@ public class InputServiceImpl implements InputService {
     @Autowired
     private RecordInfoMapper recordInfoMapper;
 
-    @Autowired
-    private OpcHandler opcHandler;
-
-    @Autowired
-    @Qualifier("inputWeight")
+    @Resource
     private double[][] inputWeight;
 
     @Resource(name = "outputWeight")
@@ -77,6 +72,7 @@ public class InputServiceImpl implements InputService {
     //值p-直排和总量的比例
     private static double p = 0.11;
 
+
     @Override
     public void predictedAndSave() {
         InputData inp = serverTableOneMapper.selectInput();
@@ -87,7 +83,6 @@ public class InputServiceImpl implements InputService {
             log.info("predictedAndSave handle:{}",rid);
             handle(inp);
         }
-
     }
 
     @Override
@@ -98,24 +93,8 @@ public class InputServiceImpl implements InputService {
         }
     }
 
-
-    @Override
-    public void predictedAndSave(Map<String,Double> map) {
-        InputData inp = new InputData();
-        inp.setInNox(map.get(CEMS.CEMS_in_NOX.getStr()));
-        inp.setInSo2(map.get(CEMS.CEMS_in_SO2.getStr()));
-        inp.setInO2(map.get(CEMS.CEMS_in_O2.getStr()));
-        //15分钟流量平均值
-        double flux = serverTableOneMapper.selectAvgFlux(DateUtil.getStringTime(LocalDateTime.now().plusSeconds(-900)),DateUtil.getStringTime(LocalDateTime.now()));
-        inp.setInFlux(flux);
-        inp.setInTemp(map.get(CEMS.CEMS_in_temp.getStr()));
-        inp.setCreateTime(new Date());
-        handle(inp);
-
-    }
-
     private void handle(InputData inp){
-        log.info("handle start ... inp:{}",JSON.toJSONString(inp));
+        log.info("handle start ... inp:{}", JSON.toJSONString(inp));
         LocalDateTime localDateTime = DateUtil.toLocalDateTime(inp.getCreateTime());
         int min = localDateTime.getMinute();
         Duration durationA = null;
@@ -204,10 +183,10 @@ public class InputServiceImpl implements InputService {
         recordInfo.setTrueValue(-1d);
         //server table 1 数据 生成时间
         recordInfo.setCreateTime(inp.getCreateTime());
-        if (inp.getInO2()>15){
+        if (inp.getInO2()>10){
             //吹气
             recordInfo.setBelong(2);
-        }else if (inp.getInNox() >1200){
+        }else if (inp.getInNox() >1000){
             //标气
             recordInfo.setBelong(3);
         }else{
@@ -217,7 +196,7 @@ public class InputServiceImpl implements InputService {
         //数据插入时间
         recordInfo.setInsertTime(new Date());
 
-
+        recordInfo.setIsDirtyNeighbor(0);
         //插入预测值
         recordInfoMapper.insert(recordInfo);
 
@@ -227,28 +206,35 @@ public class InputServiceImpl implements InputService {
         String end = DateUtil.getStringTime(dateTime.plusSeconds(-290),DateUtil.DEFAULT_DATETIME_PATTERN);;
         RecordInfo updateRecord = recordInfoMapper.selectByTime(start,end);
         if (Objects.nonNull(updateRecord)){
-            if (inp.getInO2()>15){
+            if (updateRecord.getBelong() == 2 || updateRecord.getBelong() == 3){
+                updateRecord.setBelong(updateRecord.getBelong());
+            }else if (inp.getInO2()>10){
                 //吹气
                 updateRecord.setBelong(2);
             }else if (inp.getInNox() >1200){
                 //标气
                 updateRecord.setBelong(3);
-            }else{
-                //正常
-                updateRecord.setBelong(1);
             }
             updateRecord.setTrueValue(inp.getInNox());
+            Double absError = Math.abs(inp.getInNox() - updateRecord.getPredictValue())/ updateRecord.getPredictValue();
+            updateRecord.setAbsError(absError);
             recordInfoMapper.updateByPrimaryKeySelective(updateRecord);
         }
 
-
-
-
     }
 
+    @Override
+    public void removeDirty() {
+        int number = 20;
+        //1、读取数据库，并且筛选掉脏数据
+        List<RecordInfo> filterRecordInfos=  recordInfoMapper.selectTrainData("start","end");
+        for (RecordInfo recordInfo : filterRecordInfos){
+            if (recordInfo.getBelong() != 1){
+                int id = recordInfo.getId();
+                recordInfoMapper.updateDirty(id-number,id+number);
+            }
+        }
 
-
-
-
+    }
 
 }
